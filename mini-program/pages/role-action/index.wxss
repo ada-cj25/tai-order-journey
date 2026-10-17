@@ -1,0 +1,25 @@
+.action-shell { padding-bottom: calc(env(safe-area-inset-bottom) + 70rpx); }
+.top-spacer { width: 84rpx; }
+.order-identity, .payment-facts, .receipt-list, .check-card, .form-card { margin-bottom: 20rpx; padding: 30rpx; }
+.order-identity strong, .order-identity text { display: block; }
+.order-identity strong { font-size: 36rpx; }
+.order-identity text { margin-top: 7rpx; color: #0b493d; font-weight: 700; }
+.order-identity view { margin-top: 12rpx; color: #818482; font-size: 23rpx; }
+.payment-row, .receipt-row { display: flex; align-items: center; justify-content: space-between; gap: 20rpx; padding: 20rpx 0; border-bottom: 2rpx solid #efefed; }
+.payment-row:last-child, .receipt-row:last-child { border-bottom: 0; }
+.payment-row strong, .payment-row text, .receipt-row strong, .receipt-row text { display: block; }
+.payment-row text, .receipt-row text { margin-top: 6rpx; color: #8b8d91; font-size: 21rpx; }
+.amount { flex: 0 0 auto; font-size: 28rpx; font-weight: 750; }
+.receipt-row > strong { color: #0b493d; font-size: 22rpx; }
+.restriction, .override-warning { margin-bottom: 20rpx; padding: 24rpx 27rpx; border-radius: 26rpx; background: #fff6df; color: #8a611a; font-size: 23rpx; line-height: 1.55; }
+.check-row { display: flex; align-items: center; gap: 12rpx; min-height: 74rpx; font-size: 26rpx; }
+.check-row checkbox { transform: scale(.88); }
+.compact-textarea { min-height: 150rpx; }
+.number-field { display: flex; align-items: center; height: 96rpx; padding: 0 26rpx; border: 2rpx solid #ececea; border-radius: 28rpx; }
+.number-field input { flex: 1; }
+.number-field text { color: #777; font-size: 24rpx; }
+.scope-check { margin-top: 22rpx; align-items: flex-start; line-height: 1.5; }
+.upload-button { min-height: 94rpx; border: 2rpx dashed #9ba9a5; border-radius: 28rpx; background: #f8faf9; color: #0b493d; font-size: 25rpx; }
+.override-warning strong, .override-warning text { display: block; }
+.override-warning text { margin: 8rpx 0 15rpx; }
+.submit-button { margin-top: 34rpx; }

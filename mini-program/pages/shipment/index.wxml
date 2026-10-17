@@ -1,0 +1,28 @@
+<view wx:if="{{order}}" class="page-shell action-shell">
+  <view class="topbar"><button class="icon-button" bindtap="back">返回</button><view class="brand-title">发货工作区</view><view class="top-spacer"></view></view>
+  <view class="page-title">登记发货车次</view><view class="page-subtitle">{{order.customerName}} · {{order.salesNumber || order.trackingSerial}}</view>
+  <view class="surface order-identity"><view><text>跟单流水号</text><strong>{{order.trackingSerial}}</strong></view><view><text>付款门禁</text><strong class="{{tailPaymentConfirmed ? 'gate-ok' : 'gate-pending'}}">{{tailPaymentConfirmed ? '尾款已确认' : '尾款未确认，暂不能发货'}}</strong></view></view>
+  <view class="section-title">可发货生产路线</view>
+  <view class="route-card surface {{item.selected ? 'selected' : ''}} {{item.completed ? '' : 'locked'}}" wx:for="{{routes}}" wx:key="id">
+    <view class="route-select" data-index="{{index}}" bindtap="toggleRoute"><view><strong>{{item.areaName}} · {{item.routeLabel}}</strong><text>{{item.productionNumber}} · 已发 {{item.batchCount}} 批</text></view><view class="choice">{{item.selected ? '已选' : item.finalBatchRecorded ? '已收口' : item.completed ? '选择' : '未完工'}}</view></view>
+    <view wx:if="{{item.selected}}" class="route-fields">
+      <view class="switch-row"><view><strong>本路线最后一批</strong><text>确认后该路线不能再发货</text></view><switch color="#00A98F" checked="{{item.isFinalBatch}}" data-index="{{index}}" bindchange="changeFinal" /></view>
+      <label class="form-label required">{{item.areaName}}本批安装费</label><view class="money-field"><text>¥</text><input type="digit" value="{{item.installationFee}}" data-index="{{index}}" bindinput="changeFee" placeholder="0.00" /></view>
+    </view>
+  </view>
+  <view class="section-title">可合车外购产品</view>
+  <view class="surface choice-list"><view class="choice-row" wx:for="{{outsourceLines}}" wx:key="id" data-index="{{index}}" bindtap="toggleOutsource"><view><strong>{{item.name}}</strong><text>{{item.usageArea}} · {{item.arrivedQty}} / {{item.plannedQty}}{{item.unit}}</text></view><view class="choice">{{item.selected ? '已选' : item.arrivedQty >= item.plannedQty ? '选择' : '未齐套'}}</view></view></view>
+  <view class="section-title">车辆与安装安排</view>
+  <view class="form-section surface">
+    <label class="form-label required">车辆信息</label><input class="form-input" data-field="vehicle" value="{{vehicle}}" bindinput="changeField" placeholder="车牌、司机或车辆识别信息" />
+    <label class="form-label required">安装负责人</label><picker range="{{installers}}" range-key="label" value="{{installerIndex}}" bindchange="changeInstaller"><view class="form-picker picker-value">{{installers[installerIndex].label}}<text>›</text></view></picker>
+    <label class="form-label required">安装班组</label><input class="form-input" data-field="installationTeamLabel" value="{{installationTeamLabel}}" bindinput="changeField" placeholder="例：安装一组" />
+    <label class="form-label required">现场联系人</label><input class="form-input" data-field="contact" value="{{contact}}" bindinput="changeField" placeholder="姓名和联系电话" />
+    <label class="form-label required">计划安装日期</label><picker mode="date" value="{{plannedAt}}" bindchange="changeDate"><view class="form-picker {{plannedAt ? '' : 'placeholder'}}">{{plannedAt || '选择日期'}}</view></picker>
+    <label class="form-label required">现场条件</label><textarea class="form-textarea short" data-field="siteConditions" value="{{siteConditions}}" bindinput="changeField" placeholder="水电、进场、电梯或其他安装条件" />
+    <label class="form-label">运输说明（选填）</label><textarea class="form-textarea short" data-field="transportNote" value="{{transportNote}}" bindinput="changeField" placeholder="车辆或现场交接说明" />
+  </view>
+  <view class="server-date-note">实际发货日期由服务端按亚洲/上海当天自动记录，手机不能修改。{{mockMode ? '当前为本地模拟。' : ''}}</view>
+  <view class="button-row"><button class="secondary-button" bindtap="saveDraft">保存草稿</button><button class="primary-button" loading="{{submitting}}" bindtap="submit">检查并提交</button></view>
+</view>
+<bottom-nav active="shipment" allow-active-navigation="{{true}}" />

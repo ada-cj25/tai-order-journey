@@ -1,0 +1,30 @@
+<view class="nav-wrap">
+  <view wx:if="{{showFloatingScan}}" class="scan-action" bindtap="openScan" role="button" aria-label="打开扫码">
+    <view class="scan-glyph scan-glyph-light" aria-hidden="true">
+      <view class="scan-corner corner-tl"></view>
+      <view class="scan-corner corner-tr"></view>
+      <view class="scan-corner corner-bl"></view>
+      <view class="scan-corner corner-br"></view>
+    </view>
+  </view>
+  <view class="nav surface">
+    <view class="nav-item {{active === item.key ? 'active' : ''}}" wx:for="{{items}}" wx:key="key" data-key="{{item.key}}" data-route="{{item.route}}" bindtap="navigate" role="button" aria-label="{{item.label}}">
+      <view wx:if="{{item.icon === 'scan'}}" class="nav-icon scan-glyph" aria-hidden="true">
+        <view class="scan-corner corner-tl"></view>
+        <view class="scan-corner corner-tr"></view>
+        <view class="scan-corner corner-bl"></view>
+        <view class="scan-corner corner-br"></view>
+      </view>
+      <view wx:elif="{{item.icon === 'profile'}}" class="nav-icon icon-profile" aria-hidden="true">
+        <view class="profile-head"></view>
+        <view class="profile-body"></view>
+      </view>
+      <view wx:elif="{{item.icon === 'tasks'}}" class="nav-icon icon-task" aria-hidden="true"><view class="check-mark"></view></view>
+      <view wx:else class="nav-icon icon-generic icon-{{item.icon}}" aria-hidden="true">
+        <view class="generic-line line-one"></view><view class="generic-line line-two"></view><view class="generic-mark"></view>
+      </view>
+      <text>{{item.label}}</text>
+    </view>
+  </view>
+  <view class="safe-bottom"></view>
+</view>

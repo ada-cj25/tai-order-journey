@@ -1,0 +1,43 @@
+<view class="page-shell design-shell">
+  <view class="topbar"><button class="icon-button" bindtap="back">返回</button><view class="brand-title">设计交付</view><view class="top-spacer"></view></view>
+  <view class="page-title">正式提交设计资料</view>
+  <view class="page-subtitle">{{mockMode ? '本机演示，只保存在这部手机' : '提交后与网页版共享订单和附件'}}</view>
+  <view wx:if="{{order}}" class="surface order-card"><strong>{{order.customerName}}</strong><text>{{order.salesNumber || order.trackingSerial}}</text><small>设计负责人：{{order.designerOwnerName}}</small></view>
+
+  <view class="surface form-card">
+    <view class="section-title">01 设计业务信息</view>
+    <label class="form-label required">设计版本</label>
+    <input class="form-input" data-field="designVersion" value="{{form.designVersion}}" bindinput="changeField" placeholder="例如 V1" />
+    <label class="form-label required">复尺完成日期</label>
+    <picker mode="date" value="{{form.surveyedAt}}" data-field="surveyedAt" bindchange="changeDate"><view class="form-picker">{{form.surveyedAt || '选择复尺日期'}}</view></picker>
+    <label class="form-label required">客户确认日期</label>
+    <picker mode="date" value="{{form.customerConfirmedAt}}" data-field="customerConfirmedAt" bindchange="changeDate"><view class="form-picker">{{form.customerConfirmedAt || '选择客户确认日期'}}</view></picker>
+    <label class="form-label">空间清单摘要（选填）</label>
+    <textarea class="form-textarea" data-field="spaces" value="{{form.spaces}}" bindinput="changeField" placeholder="例如客厅、书房、主卧" />
+    <label class="form-label">材料、颜色与特殊工艺（选填）</label>
+    <textarea class="form-textarea" data-field="materials" value="{{form.materials}}" bindinput="changeField" placeholder="填写设计说明" />
+  </view>
+
+  <view class="surface form-card">
+    <view class="section-title">02 资料与客户确认</view>
+    <label class="form-label required">CAD 设计资料</label>
+    <view class="hint">DWG、DXF、PDF、XLS、XLSX；可从微信会话选择多份</view>
+    <button class="file-button" data-category="DESIGN_CAD" bindtap="chooseFile" disabled="{{busy}}">＋ 选择 CAD 资料</button>
+    <view class="file-row" wx:for="{{cadFiles}}" wx:key="id"><text class="file-name" data-id="{{item.id}}" bindtap="previewFile">{{item.originalName}}</text><text class="remove" data-id="{{item.id}}" bindtap="removeFile">移除</text></view>
+
+    <label class="form-label required">客户确认图或签字</label>
+    <view class="hint">PDF、PNG、JPG；可选择文件或拍照</view>
+    <view class="file-actions"><button class="file-button" data-category="DESIGN_CONFIRMATION" bindtap="chooseFile" disabled="{{busy}}">选择文件</button><button class="file-button" data-category="DESIGN_CONFIRMATION" bindtap="choosePhoto" disabled="{{busy}}">拍照/相册</button></view>
+    <view class="file-row" wx:for="{{confirmationFiles}}" wx:key="id"><text class="file-name" data-id="{{item.id}}" bindtap="previewFile">{{item.originalName}}</text><text class="remove" data-id="{{item.id}}" bindtap="removeFile">移除</text></view>
+
+    <label class="form-label">客户样块（选填）</label>
+    <view class="hint">可上传多份 PDF、PNG、JPG、HEIC</view>
+    <view class="file-actions"><button class="file-button" data-category="CUSTOMER_SAMPLE_BLOCK" bindtap="chooseFile" disabled="{{busy}}">选择文件</button><button class="file-button" data-category="CUSTOMER_SAMPLE_BLOCK" bindtap="choosePhoto" disabled="{{busy}}">拍照/相册</button></view>
+    <view class="file-row" wx:for="{{sampleFiles}}" wx:key="id"><text class="file-name" data-id="{{item.id}}" bindtap="previewFile">{{item.originalName}}</text><text class="remove" data-id="{{item.id}}" bindtap="removeFile">移除</text></view>
+    <label class="form-label">样块共用备注{{sampleFiles.length ? '（必填）' : '（选填）'}}</label>
+    <textarea class="form-textarea" data-field="sampleBlockRemark" value="{{form.sampleBlockRemark}}" bindinput="changeField" placeholder="有样块时填写颜色、材质、适用区域或确认说明" />
+  </view>
+
+  <view class="submit-note">草稿只保存进度，不推进流程。正式提交后由订单管理员前置审单。</view>
+  <view class="button-row"><button class="secondary-button" bindtap="saveDraft" disabled="{{busy || loading}}">保存当前进度</button><button class="primary-button" bindtap="submit" disabled="{{busy || loading}}">检查并提交</button></view>
+</view>

@@ -1,0 +1,13 @@
+<view class="page-shell orders-shell">
+  <view class="topbar"><view class="brand-lockup"><image class="brand-logo" src="/assets/brand-logo.png" mode="aspectFill" /><view class="brand-title">订单</view></view><button class="icon-button" bindtap="openNotifications"><image class="message-icon" src="/assets/icons/message.svg" mode="aspectFit" /></button></view>
+  <view class="page-title">{{scopeTitle}}</view><view class="page-subtitle">{{employee.roleLabel}} · {{scopeDescription}}</view>
+  <view class="search-field"><icon type="search" size="18" color="#8b8d91" /><input value="{{query}}" bindinput="changeQuery" placeholder="客户、销售编号、跟单号或销售姓名" /></view>
+  <view wx:if="{{!orders.length}}" class="surface empty-card">没有匹配的订单</view>
+  <view class="surface order-row" wx:for="{{orders}}" wx:key="id" data-id="{{item.id}}" bindtap="openOrder">
+    <view class="order-row-top"><view><strong>{{item.salesNumber || item.trackingSerial}}</strong><text>{{item.customerName}} · {{item.brandLabel}}</text><text wx:if="{{showSalesOwner}}" class="sales-owner">所属销售 · {{item.salesOwnerName || '待分配'}}</text></view><view><view class="stage">{{item.stageLabel}}</view><view wx:if="{{item.afterSalesActive}}" class="aftersales-marker">售后处理中</view></view></view>
+    <view class="progress-caption"><text>跟单流程 · 第 {{item.stageIndex}} / {{item.stageTotal}} 阶段</text></view>
+    <view class="progress-line"><view style="width: {{item.journeyProgress}}%"></view></view>
+    <view class="order-row-bottom"><text>{{item.nextAction}}</text><strong>{{item.currentTaskDueLabel || item.dueLabel}}</strong></view>
+  </view>
+</view>
+<bottom-nav active="orders" />

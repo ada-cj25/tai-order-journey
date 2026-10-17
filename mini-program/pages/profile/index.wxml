@@ -1,0 +1,18 @@
+<view class="page-shell">
+  <view class="topbar"><view class="brand-title">我的</view><view></view></view>
+  <view class="surface identity-card">
+    <view class="avatar">{{avatarText}}</view>
+    <view><view class="person-name">{{employee.name}}</view><view class="muted">{{employee.roleLabel}} · {{employee.department}}</view></view>
+  </view>
+  <view class="scope-note">{{scopeLabel}}</view>
+  <view class="section-title">快捷入口</view>
+  <view class="surface menu-list">
+    <view class="menu-row" wx:for="{{menus}}" wx:key="route" data-route="{{item.route}}" bindtap="openMenu"><text>{{item.label}}</text><strong>{{item.meta}}</strong></view>
+    <view class="menu-row" bindtap="openWebView"><text>网页版复杂功能</text><strong>WebView 预留</strong></view>
+    <view class="menu-row" bindtap="showPrivacy"><text>数据与隐私边界</text><strong>查看</strong></view>
+    <view wx:if="{{mockMode}}" class="menu-row" bindtap="switchAccount"><text>切换测试账号</text><strong>仅本地</strong></view>
+  </view>
+  <button class="logout-button" bindtap="logout">退出登录</button>
+  <view class="environment">{{environmentLabel}}</view>
+</view>
+<bottom-nav active="profile" />

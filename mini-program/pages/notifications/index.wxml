@@ -1,0 +1,8 @@
+<view class="page-shell notice-shell">
+  <view class="topbar"><button class="icon-button" bindtap="back">返回</button><view class="brand-title">消息中心</view><view class="top-spacer"></view></view>
+  <view class="page-title">与任务同步的提醒</view><view class="page-subtitle">业务待办是事实源，消息不代替实际提交</view>
+  <view wx:if="{{loading}}" class="surface notice-empty">正在加载…</view>
+  <view class="surface notice-row {{item.read ? 'read' : ''}} {{item.level}}" wx:for="{{items}}" wx:key="id" data-id="{{item.id}}" bindtap="markRead">
+    <view class="notice-dot"></view><view><strong>{{item.title}}</strong><text>{{item.body}}</text><small>{{item.read ? '已读' : '点击标记已读'}}</small></view>
+  </view>
+</view>

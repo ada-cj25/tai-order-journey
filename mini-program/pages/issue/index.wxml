@@ -1,0 +1,25 @@
+<view class="page-shell issue-shell">
+  <view class="topbar"><button class="icon-button" bindtap="back">返回</button><view class="brand-title">报告异常</view><view class="top-spacer"></view></view>
+  <view wx:if="{{loading}}" class="surface loading-card">正在核对工序状态…</view>
+  <block wx:elif="{{task}}">
+    <view class="page-title">{{task.title}}异常</view>
+    <view class="page-subtitle">异常只记录到当前生产区域和工序</view>
+    <view class="surface issue-context">
+      <view><text>客户 / 销售编号</text><strong>{{task.customerName}} · {{task.salesNumber}}</strong></view>
+      <view><text>区域 / 生产编号</text><strong>{{task.productionAreaName}} · {{task.productionNumber}}</strong></view>
+      <view><text>路线 / 工序</text><strong>{{task.routeLabel}} · {{task.title}}</strong></view>
+    </view>
+    <label class="form-label">问题说明（必填）</label>
+    <textarea class="form-textarea" maxlength="500" value="{{note}}" bindinput="changeNote" placeholder="例如：图纸尺寸与板件不一致，已暂停加工" />
+    <label class="form-label">现场照片（最多3张）</label>
+    <view class="photo-grid" wx:if="{{attachments.length}}">
+      <view class="photo-item" wx:for="{{attachments}}" wx:key="*this">
+        <image src="{{item}}" mode="aspectFill" />
+        <button data-index="{{index}}" bindtap="removePhoto" aria-label="删除照片">×</button>
+      </view>
+    </view>
+    <button wx:if="{{attachments.length < 3}}" class="secondary-button choose-photo" bindtap="choosePhoto">拍照或从相册选择</button>
+    <view class="helper">网络失败时说明和已选照片会留在本机；只有提交成功后才会形成订单异常记录。</view>
+    <button class="primary-button submit" loading="{{submitting}}" disabled="{{submitting}}" bindtap="submit">提交异常</button>
+  </block>
+</view>

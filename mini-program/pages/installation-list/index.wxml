@@ -1,0 +1,16 @@
+<view class="page-shell installation-list-shell">
+  <view class="topbar"><view class="brand-lockup"><image class="brand-logo" src="/assets/brand-logo.png" mode="aspectFill" /><view class="brand-title">安装</view></view></view>
+  <view class="page-title">我的安装车次</view>
+  <view class="page-subtitle">每次发货独立安排、记录和完成安装</view>
+  <view wx:if="{{loading}}" class="surface empty-card">正在加载安装任务…</view>
+  <view wx:elif="{{error}}" class="surface empty-card">{{error}}<button bindtap="loadData">重新加载</button></view>
+  <view wx:elif="{{!tasks.length}}" class="surface empty-card">当前没有分配给你的安装车次</view>
+  <view class="surface install-card" wx:for="{{tasks}}" wx:key="id" data-route="{{item.actionRoute}}" bindtap="openTask">
+    <view class="install-card-head"><strong>{{item.customerName}}</strong><text>{{item.type === 'INSTALLATION' ? '待安装' : '待验收'}}</text></view>
+    <view class="install-card-number">{{item.salesNumber || item.trackingSerial}}</view>
+    <view class="install-card-title">{{item.title}}</view>
+    <view class="install-card-detail">{{item.description}}</view>
+    <view class="install-card-foot"><text>{{item.dueLabel}}</text><strong>{{item.actionLabel || '查看任务'}} ›</strong></view>
+  </view>
+</view>
+<bottom-nav active="installation" />

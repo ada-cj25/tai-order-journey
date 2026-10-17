@@ -1,0 +1,53 @@
+<view class="page-shell center-shell">
+  <view class="topbar"><button class="icon-button" bindtap="back">返回</button><view class="brand-title">{{title}}</view><view class="top-spacer"></view></view>
+  <view class="center-heading"><view class="page-title">{{title}}</view><view class="page-subtitle">{{subtitle}}</view></view>
+
+  <view wx:if="{{section === 'finance' && employee.role === 'FINANCE'}}" class="surface account-request">
+    <view class="card-title">申请新增收款账户</view>
+    <input class="form-input" value="{{accountName}}" bindinput="changeAccountName" placeholder="银行与账户用途，例如：招商银行基本户" />
+    <button class="primary-button compact-action" loading="{{busy}}" bindtap="requestAccount">提交董事长审批</button>
+  </view>
+
+  <view wx:if="{{employee.role === 'CHAIRMAN' && accounts.length}}" class="section-title">待审批收款账户</view>
+  <view wx:if="{{employee.role === 'CHAIRMAN' && accounts.length}}" class="surface account-card" wx:for="{{accounts}}" wx:key="id">
+    <view class="account-head"><strong>{{item.name}}</strong><text class="status {{item.status}}">{{item.status === 'PENDING' ? '待审批' : item.status === 'APPROVED' ? '已通过' : '已驳回'}}</text></view>
+    <block wx:if="{{item.status === 'PENDING'}}">
+      <textarea class="small-textarea" value="{{reviewComment}}" bindinput="changeReviewComment" maxlength="500" placeholder="审批意见；驳回时必填" />
+      <view class="dual-actions"><button class="secondary-button" data-id="{{item.id}}" data-decision="REJECT" bindtap="reviewAccount">驳回</button><button class="primary-button" data-id="{{item.id}}" data-decision="APPROVE" bindtap="reviewAccount">通过</button></view>
+    </block>
+    <view wx:else class="review-note">{{item.reviewComment || '审批已完成'}}</view>
+  </view>
+  <block wx:if="{{employee.role === 'FINANCE' && accounts.length}}">
+    <view class="section-title">收款账户状态</view>
+    <view class="surface account-card" wx:for="{{accounts}}" wx:key="id"><view class="account-head"><strong>{{item.name}}</strong><text class="status {{item.status}}">{{item.status === 'PENDING' ? '待审批' : item.status === 'APPROVED' ? '已启用' : '已驳回'}}</text></view><view wx:if="{{item.reviewComment}}" class="review-note">审批意见：{{item.reviewComment}}</view></view>
+  </block>
+
+  <block wx:if="{{procurement}}">
+    <view class="surface procurement-order"><strong>{{procurement.order.customerName}}</strong><text>{{procurement.order.salesNumber || procurement.order.trackingSerial}}</text><view>本页不传输物料明细或Excel解析数据</view></view>
+    <view class="section-title">采购路线</view>
+    <view class="surface route-card" wx:for="{{procurement.routes}}" wx:key="id">
+      <view class="route-head"><strong>{{item.label}}</strong><text class="status {{item.completedAt ? 'APPROVED' : 'PENDING'}}">{{item.completedAt ? '已完成' : '待确认'}}</text></view>
+      <view class="route-areas">涉及区域：{{item.productionNumbers.length ? item.productionNumbers : '当前无适用区域'}}</view>
+      <button wx:if="{{!item.completedAt && item.productionNumbers.length}}" class="primary-button compact-action" data-kind="{{item.kind}}" bindtap="confirmRoute">确认路线采购完成</button>
+    </view>
+    <view wx:if="{{employee.role === 'CHAIRMAN'}}" class="override-box"><label class="form-label">关键覆盖原因</label><textarea class="small-textarea" value="{{overrideReason}}" bindinput="changeOverrideReason" maxlength="500" placeholder="至少5个字，将写入审计记录" /></view>
+    <block wx:if="{{employee.role === 'PROCUREMENT' && procurement.hardwareAreas.length}}">
+      <view class="section-title">区域五金包最终数量</view>
+      <view class="surface hardware-list">
+        <view class="hardware-summary">当前合计 <strong>{{hardwareTotal}} 包</strong> · {{procurement.hardwareAreas.length - hardwarePending}} / {{procurement.hardwareAreas.length}} 区域已确认</view>
+        <view class="hardware-row" wx:for="{{procurement.hardwareAreas}}" wx:key="id"><view><strong>{{item.name}}</strong><text>{{item.productionNumber}} · {{item.finalized ? '已确认' : '待确认'}}</text></view><input type="number" value="{{item.total}}" disabled="{{item.finalized}}" data-index="{{index}}" bindinput="changeHardwareTotal" /><text class="unit">包</text></view>
+        <button class="primary-button compact-action" disabled="{{busy || !hardwarePending}}" bindtap="finalizeHardware">确认全部待处理区域</button>
+      </view>
+    </block>
+  </block>
+
+  <view class="section-title">{{section === 'technical' ? '电脑端任务队列' : '当前任务'}}</view>
+  <view wx:if="{{!tasks.length && !loading}}" class="surface empty-card">当前没有待处理任务</view>
+  <view class="surface center-task {{item.urgency}}" wx:for="{{tasks}}" wx:key="id" data-route="{{item.actionRoute}}" data-desktop="{{item.presentation === 'DESKTOP_HANDOFF' || item.desktopOnly}}" data-identifier="{{item.desktopHandoff.identifier}}" data-module="{{item.desktopHandoff.moduleLabel}}" data-reason="{{item.desktopHandoff.reason}}" bindtap="openTask">
+    <view class="task-head"><view><strong>{{item.customerName}}</strong><text>{{item.salesNumber || item.trackingSerial}}</text></view><text class="task-status">{{item.urgencyLabel}}</text></view>
+    <view class="task-name">{{item.title}}<text wx:if="{{item.presentation === 'DESKTOP_HANDOFF'}}" class="desktop-tag">电脑端</text></view>
+    <view class="task-description">{{item.description}}</view>
+    <view class="task-foot"><text>{{item.dueLabel}}</text><strong>{{item.actionLabel || '查看详情'}}</strong></view>
+  </view>
+</view>
+<bottom-nav active="role-center" />

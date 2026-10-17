@@ -1,0 +1,19 @@
+{
+  "approvedBy": "",
+  "receiptAccountsConfirmed": false,
+  "numberingCutoverConfirmed": false,
+  "administrator": {
+    "employeeNo": "",
+    "username": "",
+    "name": "",
+    "department": "管理层"
+  },
+  "numberPools": [
+    { "yearMonth": "YYMM", "category": 0, "lastValue": 0 },
+    { "yearMonth": "YYMM", "category": 1, "lastValue": 0 },
+    { "yearMonth": "YYMM", "category": 5, "lastValue": 0 },
+    { "yearMonth": "YYMM", "category": 7, "lastValue": 0 },
+    { "yearMonth": "YYMM", "category": 8, "lastValue": 0 },
+    { "yearMonth": "YYMM", "category": 9, "lastValue": 0 }
+  ]
+}

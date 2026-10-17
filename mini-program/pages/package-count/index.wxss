@@ -1,0 +1,31 @@
+.package-shell { padding-bottom: 80rpx; }
+.top-spacer { width: 84rpx; }
+.package-shell .page-title { margin-top: 42rpx; }
+.package-shell .page-subtitle { overflow-wrap: anywhere; }
+.loading-card { margin-top: 28rpx; padding: 34rpx; color: #777; }
+.package-overview { margin-top: 30rpx; padding: 32rpx; }
+.overview-title, .source-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 20rpx; }
+.overview-title strong { font-size: 27rpx; }
+.overview-title text, .source-status { color: #0b6b59; font-size: 22rpx; }
+.overview-total { margin: 20rpx 0; color: #064d3e; font-size: 68rpx; font-weight: 800; }
+.overview-total text { margin-left: 8rpx; font-size: 24rpx; font-weight: 500; }
+.overview-split { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12rpx; padding-top: 20rpx; border-top: 1rpx solid #e5e8e6; color: #737977; font-size: 21rpx; }
+.overview-split strong { display: block; margin-top: 7rpx; color: #202a25; font-size: 28rpx; }
+.package-note { margin: 25rpx 4rpx; color: #686f6b; font-size: 22rpx; line-height: 1.55; }
+.source-card { margin-top: 18rpx; padding: 30rpx; }
+.source-head > view { flex: 1; min-width: 0; }
+.source-kind { display: block; margin-bottom: 8rpx; color: #0b6b59; font-size: 21rpx; }
+.source-head strong { display: block; overflow-wrap: anywhere; font-size: 28rpx; }
+.source-status { flex: none; padding: 8rpx 13rpx; border-radius: 15rpx; background: #eaf8f4; }
+.source-total { margin-top: 20rpx; font-size: 24rpx; }
+.source-total strong { font-size: 36rpx; }
+.source-detail { margin-top: 12rpx; color: #777e79; font-size: 21rpx; line-height: 1.5; }
+.source-action { width: 100%; margin: 22rpx 0 0; }
+.source-input-row { display: flex; align-items: stretch; gap: 12rpx; margin-top: 22rpx; }
+.source-quantity-field { display: flex; align-items: center; flex: 1; min-width: 0; height: 88rpx; box-sizing: border-box; border: 2rpx solid #d8dedb; border-radius: 18rpx; background: #fff; }
+.source-quantity-field input { flex: 1; min-width: 0; height: 100%; padding: 0 20rpx; box-sizing: border-box; border: 0; background: transparent; font-size: 26rpx; }
+.source-input-row button { flex: none; height: 88rpx; margin: 0; padding: 0 22rpx; border-radius: 18rpx; font-size: 23rpx; }
+.entry-list { margin-top: 25rpx; padding-top: 18rpx; border-top: 1rpx solid #e5e8e6; }
+.entry-title { margin-bottom: 8rpx; color: #6a716c; font-size: 22rpx; }
+.entry-row { display: flex; justify-content: space-between; padding: 10rpx 0; color: #6a716c; font-size: 21rpx; }
+.entry-row strong { color: #0b6b59; }

@@ -1,0 +1,7 @@
+.web-shell { padding-bottom: 80rpx; }
+.top-spacer { width: 84rpx; }
+.info-card { padding: 16rpx 34rpx; }
+.info-card view { min-height: 92rpx; display: flex; justify-content: space-between; align-items: center; border-bottom: 2rpx solid var(--color-line); }
+.info-card view:last-child { border-bottom: 0; }
+.info-card text { color: var(--color-muted); }
+.info-card strong { color: var(--color-forest); }

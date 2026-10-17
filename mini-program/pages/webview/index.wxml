@@ -1,0 +1,11 @@
+<web-view wx:if="{{enabled}}" src="{{url}}"></web-view>
+<view wx:else class="page-shell web-shell">
+  <view class="topbar"><button class="icon-button" bindtap="back">返回</button><view class="brand-title">网页版功能</view><view class="top-spacer"></view></view>
+  <view class="page-title">尚未启用</view>
+  <view class="page-subtitle">本地原生页面可以继续开发；WebView 等备案域名、HTTPS、主体能力和业务域名校验完成后再开启。</view>
+  <view class="surface info-card">
+    <view><text>当前模式</text><strong>本地模拟</strong></view>
+    <view><text>业务域名</text><strong>未配置</strong></view>
+    <view><text>真实客户数据</text><strong>未接入</strong></view>
+  </view>
+</view>

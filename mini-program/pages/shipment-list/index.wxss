@@ -1,0 +1,25 @@
+.shipment-list-shell { padding-bottom: calc(220rpx + env(safe-area-inset-bottom)); }
+.search-field { min-height: 96rpx; display: flex; align-items: center; gap: 18rpx; padding: 0 28rpx; border-radius: 28rpx; background: #fff; }
+.search-field input { flex: 1; font-size: 29rpx; }
+.filter-row { display: flex; gap: 12rpx; margin: 30rpx 0 12rpx; }
+.filter-chip { flex: 1; min-height: 76rpx; border-radius: 24rpx; background: #e9eae8; color: #5b625f; font-size: 25rpx; display: flex; align-items: center; justify-content: center; white-space: nowrap; }
+.filter-chip.active { background: #0b493d; color: #fff; font-weight: 700; }
+.shipment-card { margin-top: 18rpx; padding: 30rpx; }
+.card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 18rpx; }
+.card-head > view:first-child { flex: 1; min-width: 0; }
+.card-head strong, .card-head text { display: block; }
+.card-head strong { font-size: 34rpx; }
+.card-head text { margin-top: 8rpx; color: var(--color-muted); font-size: 26rpx; word-break: break-all; }
+.status { flex: none; padding: 10rpx 16rpx; border-radius: 20rpx; background: #e5f5f0; color: #0b6b59; font-size: 24rpx; }
+.status.waiting { background: #fff3df; color: #9b641d; }
+.card-detail { margin-top: 26rpx; color: #4a514e; font-size: 27rpx; line-height: 1.55; white-space: pre-line; }
+.history-rows { margin-top: 24rpx; border-top: 2rpx solid var(--color-line); }
+.history-row { padding: 22rpx 0; border-bottom: 2rpx solid var(--color-line); }
+.history-row strong, .history-row text { display: block; }
+.history-row strong { font-size: 28rpx; }
+.history-row text { margin-top: 6rpx; color: var(--color-muted); font-size: 24rpx; }
+.card-foot { margin-top: 26rpx; padding-top: 23rpx; border-top: 2rpx solid var(--color-line); display: flex; align-items: center; justify-content: space-between; gap: 16rpx; }
+.card-foot text { color: #6d7470; font-size: 24rpx; }
+.card-foot strong { color: #0b493d; font-size: 27rpx; white-space: nowrap; }
+.empty-card { margin-top: 20rpx; padding: 55rpx 30rpx; color: var(--color-muted); text-align: center; }
+.retry-button { margin-top: 24rpx; background: #0b493d; color: #fff; font-size: 28rpx; }

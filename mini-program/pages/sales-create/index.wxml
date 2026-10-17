@@ -1,0 +1,126 @@
+<view class="page-shell sales-shell">
+  <view class="topbar">
+    <button class="icon-button" bindtap="back">返回</button>
+    <view class="brand-title">销售来单</view>
+    <view class="top-spacer"></view>
+  </view>
+
+  <view class="page-title">{{reReport ? '补报签约首付款' : isSupplement ? '创建关联补单' : '新建签约订单'}}</view>
+  <view class="page-subtitle">{{reReport ? '旧版演示订单未保存付款事实，请重新选择两张凭证' : mockMode ? '仅在本机演示，不与网页版同步' : '草稿同步至当前销售账号'}}</view>
+
+  <view wx:if="{{reReport}}" class="form-section surface">
+    <view class="section-head"><text>01</text><strong>{{customerName}} · {{existingOrderId}}</strong></view>
+    <label class="form-label required">原合同金额</label>
+    <view class="money-field"><text>¥</text><input type="digit" data-field="contractAmount" value="{{contractAmount}}" bindinput="changeField" placeholder="请按原合同重新填写" /></view>
+  </view>
+
+  <view wx:if="{{!reReport}}" class="form-section surface">
+    <view class="section-head"><text>01</text><strong>客户与合同</strong></view>
+    <label class="form-label required">订单类型</label>
+    <picker range="{{orderTypes}}" value="{{orderTypeIndex}}" bindchange="changeOrderType"><view class="form-picker picker-value">{{orderTypes[orderTypeIndex]}}<text>⌄</text></view></picker>
+    <view class="helper">正单与补单按当前销售所属品牌显示；补单需关联一张正单。</view>
+    <view wx:if="{{isSupplement}}">
+      <label class="form-label required">关联正单</label>
+      <picker range="{{parentOrderOptions}}" value="{{parentOrderIndex}}" bindchange="changeParent"><view class="form-picker picker-value">{{parentOrderOptions[parentOrderIndex] || '请选择本人负责的正单'}}<text>⌄</text></view></picker>
+      <label class="form-label required">补单来源</label>
+      <picker range="{{supplementTypeOptions}}" value="{{supplementTypeIndex}}" bindchange="changeSupplementType"><view class="form-picker picker-value">{{supplementTypeOptions[supplementTypeIndex]}}<text>⌄</text></view></picker>
+      <label class="form-label required">责任 / 收费</label>
+      <picker range="{{responsibilityOptions}}" value="{{responsibilityIndex}}" bindchange="changeResponsibility"><view class="form-picker picker-value">{{responsibilityOptions[responsibilityIndex]}}<text>⌄</text></view></picker>
+      <label class="form-label required">补单事实与原因</label>
+      <textarea class="form-textarea short" data-field="supplementReason" value="{{supplementReason}}" bindinput="changeField" placeholder="记录现场事实、增项内容或责任说明" />
+    </view>
+    <label class="form-label required">客户姓名</label>
+    <input class="form-input" disabled="{{isSupplement}}" data-field="customerName" value="{{customerName}}" bindinput="changeField" placeholder="请输入客户姓名" />
+    <label class="form-label required">客户电话</label>
+    <input class="form-input" disabled="{{isSupplement}}" type="number" data-field="customerPhone" value="{{customerPhone}}" bindinput="changeField" placeholder="请输入联系电话" />
+    <label class="form-label required">项目地址</label>
+    <input class="form-input" disabled="{{isSupplement}}" data-field="address" value="{{address}}" bindinput="changeField" placeholder="请输入详细地址" />
+    <view class="field-grid">
+      <view>
+        <label class="form-label required">合同金额</label>
+        <view class="money-field"><text>¥</text><input type="digit" data-field="contractAmount" value="{{contractAmount}}" bindinput="changeField" placeholder="0.00" /></view>
+      </view>
+      <view>
+        <label class="form-label required">签约日期</label>
+        <picker mode="date" value="{{signedDate}}" bindchange="changeSignedDate"><view class="form-picker compact {{signedDate ? '' : 'placeholder'}}">{{signedDate || '选择日期'}}</view></picker>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{!isSupplement}}" class="form-section payment-section surface">
+    <view class="section-head"><text>02</text><strong>签约首付款 · 定金</strong></view>
+    <view class="section-tip">按客户实际支付事实填写，到账日期可以早于签约日期。{{mockMode ? '当前收款账户为本机占位选项，与网页版审批目录不相通。' : ''}}</view>
+    <view class="field-grid">
+      <view>
+        <label class="form-label required">定金金额</label>
+        <view class="money-field"><text>¥</text><input type="digit" data-field="depositAmount" value="{{depositAmount}}" bindinput="changeField" placeholder="0.00" /></view>
+      </view>
+      <view>
+        <label class="form-label required">到账日期</label>
+        <picker mode="date" value="{{depositReceivedDate}}" bindchange="changeDepositDate"><view class="form-picker compact {{depositReceivedDate ? '' : 'placeholder'}}">{{depositReceivedDate || '选择日期'}}</view></picker>
+      </view>
+    </view>
+    <label class="form-label required">定金收款账户</label>
+    <picker range="{{paymentAccounts}}" value="{{depositAccountIndex}}" bindchange="changeDepositAccount"><view class="form-picker picker-value">{{paymentAccounts[depositAccountIndex]}}<text>⌄</text></view></picker>
+    <label class="form-label required">定金凭证</label>
+    <button class="upload-button {{depositReceiptPath ? 'uploaded' : ''}}" bindtap="chooseDepositReceipt">
+      <text class="upload-icon">＋</text>
+      <view><strong>{{depositReceiptPath ? '已选择定金凭证' : '拍照或从相册选择'}}</strong><small>{{depositReceiptName || '支持一张付款截图或照片'}}</small></view>
+    </button>
+  </view>
+
+  <view wx:if="{{!isSupplement}}" class="form-section payment-section surface">
+    <view class="section-head"><text>03</text><strong>签约首付款 · 预付款</strong></view>
+    <view class="field-grid">
+      <view>
+        <label class="form-label required">预付款金额</label>
+        <view class="money-field"><text>¥</text><input type="digit" data-field="prepaymentAmount" value="{{prepaymentAmount}}" bindinput="changeField" placeholder="0.00" /></view>
+      </view>
+      <view>
+        <label class="form-label required">到账日期</label>
+        <picker mode="date" value="{{prepaymentReceivedDate}}" bindchange="changePrepaymentDate"><view class="form-picker compact {{prepaymentReceivedDate ? '' : 'placeholder'}}">{{prepaymentReceivedDate || '选择日期'}}</view></picker>
+      </view>
+    </view>
+    <label class="form-label required">预付款收款账户</label>
+    <picker range="{{paymentAccounts}}" value="{{prepaymentAccountIndex}}" bindchange="changePrepaymentAccount"><view class="form-picker picker-value">{{paymentAccounts[prepaymentAccountIndex]}}<text>⌄</text></view></picker>
+    <label class="form-label required">预付款凭证</label>
+    <button class="upload-button {{prepaymentReceiptPath ? 'uploaded' : ''}}" bindtap="choosePrepaymentReceipt">
+      <text class="upload-icon">＋</text>
+      <view><strong>{{prepaymentReceiptPath ? '已选择预付款凭证' : '拍照或从相册选择'}}</strong><small>{{prepaymentReceiptName || '支持一张付款截图或照片'}}</small></view>
+    </button>
+  </view>
+
+  <view wx:if="{{!reReport}}" class="form-section surface">
+    <view class="section-head"><text>04</text><strong>交付与排程</strong></view>
+    <label class="form-label required">客户约定交期</label>
+    <picker mode="date" value="{{promisedDate}}" bindchange="changePromisedDate"><view class="form-picker picker-value {{promisedDate ? '' : 'placeholder'}}"><text>{{promisedDate || '按客户实际约定选择'}}</text><text>›</text></view></picker>
+    <view class="helper">系统不按现场类型自动生成客户交期。</view>
+    <label class="form-label required">现场类型</label>
+    <picker range="{{siteTypes}}" value="{{siteIndex}}" bindchange="changeSite"><view class="form-picker picker-value">{{siteTypes[siteIndex]}}<text>⌄</text></view></picker>
+    <label wx:if="{{showVillaFloors}}" class="form-label required">别墅楼层数</label>
+    <input wx:if="{{showVillaFloors}}" class="form-input" type="number" data-field="villaFloors" value="{{villaFloors}}" bindinput="changeField" placeholder="至少 1 层，每层生产工期 +10 天" />
+    <view class="field-grid">
+      <view>
+        <label class="form-label required">生产工艺</label>
+        <picker range="{{finishTypes}}" value="{{finishTypeIndex}}" bindchange="changeFinishType"><view class="form-picker compact">{{finishTypes[finishTypeIndex]}}</view></picker>
+      </view>
+      <view>
+        <label class="form-label">皮革门</label>
+        <picker range="{{leatherDoorOptions}}" value="{{leatherDoorIndex}}" bindchange="changeLeatherDoor"><view class="form-picker compact">{{leatherDoorOptions[leatherDoorIndex]}}</view></picker>
+      </view>
+    </view>
+    <label class="form-label required">分配设计师</label>
+    <picker range="{{designers}}" value="{{designerIndex}}" bindchange="changeDesigner"><view class="form-picker picker-value">{{designers[designerIndex]}}<text>⌄</text></view></picker>
+    <label class="form-label required">排程类型</label>
+    <picker range="{{scheduleTypes}}" value="{{scheduleIndex}}" bindchange="changeSchedule"><view class="form-picker picker-value">{{scheduleTypes[scheduleIndex]}}<text>⌄</text></view></picker>
+    <view wx:if="{{showRushFields}}" class="rush-fields">
+      <label class="form-label required">加急原因</label>
+      <textarea class="form-textarea short" data-field="rushReason" value="{{rushReason}}" bindinput="changeField" placeholder="说明加急事实与原因" />
+      <label class="form-label required">客户承诺日期</label>
+      <picker mode="date" value="{{rushPromisedDate}}" bindchange="changeRushDate"><view class="form-picker {{rushPromisedDate ? '' : 'placeholder'}}">{{rushPromisedDate || '请选择日期'}}</view></picker>
+    </view>
+  </view>
+
+  <view class="submit-note">{{reReport ? '补报后由财务核验；原先选择的临时照片无法找回，需重新选择。' : '正式提交后先生成跟单流水号；销售编号在设计师正式提交时生成。'}}{{mockMode ? '本机演示订单只在本机可见，不写入网页或数据库。' : '提交后付款等待财务核验。'}}</view>
+  <view class="button-row"><button wx:if="{{!reReport}}" class="secondary-button" bindtap="saveDraft">保存草稿</button><button class="primary-button" loading="{{submitting}}" bindtap="submit">{{reReport ? '补报并交财务核验' : '检查并提交'}}</button></view>
+</view>

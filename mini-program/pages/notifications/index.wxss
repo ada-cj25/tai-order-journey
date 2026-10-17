@@ -1,0 +1,11 @@
+.notice-shell { padding-bottom: 80rpx; }
+.top-spacer { width: 84rpx; }
+.notice-row { margin-bottom: 18rpx; padding: 28rpx; display: grid; grid-template-columns: 18rpx 1fr; gap: 18rpx; }
+.notice-dot { width: 16rpx; height: 16rpx; margin-top: 8rpx; border-radius: 50%; background: #00a98f; }
+.notice-row.URGENT .notice-dot { background: #df6255; }
+.notice-row.read { opacity: .62; }
+.notice-row strong, .notice-row text, .notice-row small { display: block; }
+.notice-row strong { font-size: 29rpx; }
+.notice-row text { margin-top: 10rpx; color: #686c6a; font-size: 24rpx; line-height: 1.55; }
+.notice-row small { margin-top: 14rpx; color: #9a9d9b; font-size: 20rpx; }
+.notice-empty { padding: 50rpx; color: #8b8d91; text-align: center; }

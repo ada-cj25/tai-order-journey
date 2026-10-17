@@ -1,0 +1,38 @@
+.supply-shell { padding-bottom: 100rpx; }
+.top-spacer { width: 84rpx; }
+.supply-shell .page-title { margin-top: 40rpx; }
+.supply-order { margin-top: 28rpx; padding: 30rpx; }
+.supply-order strong, .supply-order text { display: block; overflow-wrap: anywhere; }
+.supply-order strong { font-size: 31rpx; }
+.supply-order text { margin-top: 8rpx; color: #0b493d; font-size: 24rpx; }
+.supply-stats { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18rpx; margin-top: 18rpx; }
+.supply-stats .surface { padding: 25rpx; }
+.supply-stats strong, .supply-stats text, .supply-stats small { display: block; }
+.supply-stats strong { color: #0b493d; font-size: 35rpx; }
+.supply-stats text { margin-top: 7rpx; font-size: 23rpx; }
+.supply-stats small { margin-top: 7rpx; color: #808582; font-size: 20rpx; }
+.supply-package-total { margin-top: 18rpx; padding: 28rpx; }
+.supply-package-total > view:first-child { display: flex; align-items: center; justify-content: space-between; gap: 18rpx; }
+.supply-package-total strong { color: #0b493d; font-size: 30rpx; }
+.supply-package-total text, .supply-package-total > view:last-child { color: #777d79; font-size: 21rpx; }
+.supply-package-total > view:last-child { margin-top: 12rpx; line-height: 1.5; }
+.supply-card { margin-bottom: 16rpx; padding: 28rpx; }
+.supply-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 20rpx; }
+.supply-card-head > view:first-child { min-width: 0; }
+.supply-card-head strong, .supply-card-head text { display: block; overflow-wrap: anywhere; }
+.supply-card-head strong { font-size: 28rpx; }
+.supply-card-head text { margin-top: 8rpx; color: #808582; font-size: 21rpx; line-height: 1.4; }
+.supply-quantity { flex: none; color: #0b493d; font-size: 30rpx; font-weight: 750; }
+.supply-badge { flex: none; padding: 9rpx 14rpx; border-radius: 18rpx; background: #eaf8f3; color: #0b6b59; font-size: 20rpx; }
+.supply-status { margin-top: 20rpx; padding-top: 18rpx; border-top: 2rpx solid #efefed; color: #727875; font-size: 22rpx; }
+.supply-count { display: flex; justify-content: space-between; gap: 15rpx; margin-top: 20rpx; font-size: 24rpx; }
+.supply-count text { color: #777d79; }
+.arrival-history { margin-top: 22rpx; padding-top: 15rpx; border-top: 2rpx solid #efefed; color: #737975; font-size: 21rpx; line-height: 1.9; }
+.supply-action { width: 100%; margin-top: 20rpx; font-size: 25rpx; }
+.arrival-form { margin-top: 22rpx; padding-top: 20rpx; border-top: 2rpx solid #efefed; }
+.arrival-form label { display: block; margin: 18rpx 0 10rpx; font-size: 23rpx; }
+.arrival-form .form-input { box-sizing: border-box; width: 100%; }
+.date-value { display: flex; align-items: center; }
+.arrival-actions { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14rpx; margin-top: 24rpx; }
+.arrival-actions button { width: 100%; margin: 0; font-size: 24rpx; }
+.supply-empty { margin-top: 18rpx; padding: 35rpx 28rpx; color: #7e8380; font-size: 23rpx; }

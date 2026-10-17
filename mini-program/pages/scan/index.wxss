@@ -1,0 +1,9 @@
+.scan-card { padding: 54rpx 38rpx 38rpx; }
+.scan-title { font-size: 40rpx; font-weight: 800; text-align: center; }
+.scan-copy { margin: 20rpx auto 46rpx; max-width: 520rpx; color: var(--color-muted); font-size: 27rpx; line-height: 1.65; text-align: center; }
+.guard-card { margin-top: 24rpx; padding: 14rpx 34rpx; }
+.guard-row { min-height: 90rpx; display: flex; align-items: center; justify-content: space-between; gap: 24rpx; border-bottom: 2rpx solid var(--color-line); font-size: 25rpx; }
+.guard-row:last-child { border-bottom: 0; }
+.guard-row text { color: var(--color-muted); }
+.guard-row strong { color: var(--color-forest); }
+.scan-helper { margin: 24rpx 12rpx 0; }

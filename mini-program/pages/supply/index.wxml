@@ -1,0 +1,40 @@
+<view class="page-shell supply-shell">
+  <view class="topbar"><button class="icon-button" bindtap="back">返回</button><view class="brand-title">包件与外购到货</view><view class="top-spacer"></view></view>
+  <view class="page-title">订单物资统计</view>
+  <view class="page-subtitle">五金包按生产区域统计；外购产品按实际到货批次累计</view>
+  <view wx:if="{{loading && !summary}}" class="surface supply-empty">正在读取订单统计…</view>
+  <block wx:if="{{summary}}">
+    <view class="surface supply-order"><strong>{{summary.order.customerName}}</strong><text>{{summary.order.salesNumber || summary.order.trackingSerial}}</text></view>
+    <view class="supply-stats"><view class="surface"><strong>{{summary.hardwareTotal}}</strong><text>五金包数</text><small>{{summary.hardwareFinalized}} / {{summary.hardwareAreas.length}} 区域已确认</small></view><view class="surface"><strong>{{summary.outsourceReady}} / {{summary.outsourceLines.length}}</strong><text>外购产品齐套</text><small>{{summary.outsourcePending}} 项待到货</small></view></view>
+    <view class="surface supply-package-total"><view><strong>{{summary.packageTotal}} 包件</strong><text>{{summary.packageStatus === 'COMPLETE' ? '统计完成' : summary.packageStatus === 'LEGACY_UNVERIFIED' ? '历史旧口径' : '当前暂计'}}</text></view><view>五金 {{summary.hardwareTotal}} · 自产入库 {{summary.manufacturedTotal}} · 外购入库 {{summary.outsourcedPackageTotal}}</view></view>
+
+    <view class="section-title">五金包 · 分区域</view>
+    <view wx:if="{{!summary.hardwareAreas.length}}" class="surface supply-empty">技术拆单后显示各生产区域的五金包数</view>
+    <view class="surface supply-card" wx:for="{{summary.hardwareAreas}}" wx:key="id">
+      <view class="supply-card-head"><view><strong>{{item.name}}</strong><text>{{item.productionNumber}}</text></view><view class="supply-quantity">{{item.total}} 包</view></view>
+      <view class="supply-status">{{item.finalized ? (item.handoffConfirmed ? '已确认 · 组装已领用' : '采购已确认 · 待组装领用') : '待采购最终确认'}}</view>
+    </view>
+    <button wx:if="{{role === 'PROCUREMENT' && summary.hardwareAreas.length && summary.hardwareFinalized < summary.hardwareAreas.length}}" class="primary-button supply-action" bindtap="openProcurement">确认各区域五金包数</button>
+
+    <view class="section-title">自产与外购入库包件</view>
+    <view wx:if="{{!summary.packageSources.length}}" class="surface supply-empty">当前尚无自产或外购入库包件来源</view>
+    <view class="surface supply-card" wx:for="{{summary.packageSources}}" wx:key="sourceKey">
+      <view class="supply-card-head"><view><strong>{{item.label}}</strong><text>{{item.finalized ? '已最终确认' : item.detail}}</text></view><view class="supply-quantity">{{item.total}} 包件</view></view>
+    </view>
+
+    <view class="section-title">外购成品 · 到货</view>
+    <view wx:if="{{!summary.outsourceLines.length}}" class="surface supply-empty">当前没有已审核发布的外购产品清单</view>
+    <view class="surface supply-card" wx:for="{{summary.outsourceLines}}" wx:key="id">
+      <view class="supply-card-head"><view><strong>{{item.name}}</strong><text>{{item.usageArea || '整单'}}<text wx:if="{{item.note}}"> · {{item.note}}</text></text></view><view class="supply-badge">{{item.shipped ? '已发货' : item.remainingQty === 0 ? '已齐套' : item.arrivedQty > 0 ? '部分到货' : '未到货'}}</view></view>
+      <view class="supply-count"><text>累计到货</text><strong>{{item.arrivedQty}} / {{item.plannedQty}} {{item.unit}}</strong></view>
+      <view class="supply-count"><text>待到货</text><strong>{{item.remainingQty}} {{item.unit}}</strong></view>
+      <view wx:if="{{item.arrivals.length}}" class="arrival-history"><view wx:for="{{item.arrivals}}" wx:for-item="arrival" wx:key="id">{{arrival.arrivedOn}} · {{arrival.quantity}} {{item.unit}}</view></view>
+      <button wx:if="{{role === 'ORDER_ADMIN' && item.remainingQty > 0 && !item.shipped && editingLineId !== item.id}}" class="secondary-button supply-action" data-id="{{item.id}}" bindtap="beginArrival">登记本次到货</button>
+      <view wx:if="{{editingLineId === item.id}}" class="arrival-form">
+        <label>本次到货数量（{{item.unit}}）</label><input class="form-input" type="number" value="{{quantity}}" bindinput="changeQuantity" />
+        <label>实际到货日期</label><picker mode="date" value="{{arrivedOn}}" bindchange="changeDate"><view class="form-input date-value">{{arrivedOn}}</view></picker>
+        <view class="arrival-actions"><button class="secondary-button" bindtap="cancelArrival">取消</button><button class="primary-button" loading="{{busy}}" disabled="{{busy}}" bindtap="submitArrival">确认到货</button></view>
+      </view>
+    </view>
+  </block>
+</view>

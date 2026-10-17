@@ -1,0 +1,15 @@
+[Unit]
+Description=Tai ERP company test PostgreSQL backup to private COS
+Requires=docker.service
+After=docker.service network-online.target
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/tai-erp
+ExecStart=/opt/tai-erp/deploy/personal/backup.sh /etc/tai-erp/company-test/release.env /opt/tai-erp/deploy/personal/compose.yaml
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+PrivateTmp=true
+NoNewPrivileges=true

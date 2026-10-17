@@ -1,0 +1,9 @@
+services:
+  api:
+    environment:
+      APP_ENVIRONMENT: company-test
+      COST_MODULE_ENABLED: "true"
+      LOCAL_TEST_ACCOUNTS_ENABLED: "false"
+  migrate:
+    environment:
+      APP_ENVIRONMENT: company-test

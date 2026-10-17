@@ -1,0 +1,26 @@
+.identity-card { margin-top: 42rpx; padding: 38rpx; display: flex; align-items: center; gap: 26rpx; }
+.avatar { width: 92rpx; height: 92rpx; border-radius: 46rpx; background: var(--color-forest); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 36rpx; font-weight: 750; }
+.person-name { margin-bottom: 8rpx; font-size: 36rpx; font-weight: 750; }
+.scope-note { margin: 18rpx 8rpx 0; color: #517067; font-size: 22rpx; line-height: 1.55; }
+.menu-list { padding: 0 34rpx; }
+.menu-row { min-height: 110rpx; display: flex; align-items: center; justify-content: space-between; border-bottom: 2rpx solid var(--color-line); }
+.menu-row:last-child { border-bottom: 0; }
+.menu-row strong { color: var(--color-muted); font-size: 24rpx; font-weight: 500; }
+.environment { margin-top: 30rpx; text-align: center; color: var(--color-muted); font-size: 23rpx; }
+.logout-button {
+  width: 100%;
+  height: 96rpx;
+  margin: 24rpx 0 0;
+  padding: 0;
+  box-sizing: border-box;
+  border-radius: 42rpx;
+  background: #fff;
+  color: #a14338;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 27rpx;
+  font-weight: 700;
+  line-height: 1;
+}

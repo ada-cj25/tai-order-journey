@@ -1,0 +1,18 @@
+.orders-shell { padding-bottom: 220rpx; }
+.search-field { height: 92rpx; display: flex; align-items: center; gap: 18rpx; padding: 0 28rpx; border-radius: 28rpx; background: #fff; }
+.search-field input { flex: 1; font-size: 26rpx; }
+.order-row { margin-top: 20rpx; padding: 30rpx; }
+.order-row-top, .order-row-bottom { display: flex; justify-content: space-between; gap: 20rpx; }
+.order-row-top > view:first-child { flex: 1; min-width: 0; }
+.order-row-top strong, .order-row-top text { display: block; }
+.order-row-top strong { font-size: 32rpx; word-break: break-all; }
+.order-row-top text { margin-top: 7rpx; color: #8b8d91; font-size: 23rpx; }
+.order-row-top .sales-owner { color: #0b6b59; font-weight: 650; }
+.stage { flex: none; box-sizing: border-box; min-height: 44rpx; padding: 8rpx 17rpx; border-radius: 22rpx; background: #e9f7f3; color: #08735f; font-size: 20rpx; line-height: 1.2; white-space: nowrap; display: flex; align-items: center; justify-content: center; }
+.progress-caption { margin-top: 20rpx; color: #747b78; font-size: 21rpx; }
+.progress-line { height: 12rpx; margin: 10rpx 0 25rpx; overflow: hidden; border-radius: 8rpx; background: #ececea; }
+.progress-line view { height: 100%; border-radius: 8rpx; background: #00a98f; }
+.order-row-bottom text { flex: 1; min-width: 0; color: #606463; font-size: 22rpx; word-break: break-all; }
+.order-row-bottom strong { flex: none; font-size: 22rpx; }
+.empty-card { margin-top: 20rpx; padding: 50rpx; color: #8b8d91; text-align: center; }
+.aftersales-marker { margin-top: 8rpx; color: #6a3b9a; font-size: 23rpx; text-align: right; }

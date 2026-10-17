@@ -1,0 +1,121 @@
+<view class="page-shell detail-shell">
+  <view class="topbar"><button class="icon-button" bindtap="back">返回</button><view class="brand-title">订单旅程</view><view class="top-spacer"></view></view>
+  <block wx:if="{{order}}">
+    <view class="surface identity">
+      <view class="order-no">{{order.salesNumber || order.trackingSerial}}</view>
+      <view class="muted">{{order.customerName}} · {{order.brandLabel}}</view>
+      <view wx:if="{{showSalesOwner}}" class="sales-owner-detail">所属销售 · {{order.salesOwnerName || '待分配'}}</view>
+      <view wx:if="{{order.designerOwnerName}}" class="designer-owner-detail">设计负责人 · {{order.designerOwnerName}}</view>
+      <view class="tracking-no">跟单流水号 · {{order.trackingSerial}}</view>
+      <view wx:if="{{order.areaSummary.total}}" class="order-area-summary">
+        <view><strong>{{order.areaSummary.total}}</strong><text>生产区域</text></view>
+        <view><strong>{{order.areaSummary.inProgress}}</strong><text>生产中</text></view>
+        <view><strong>{{order.areaSummary.completed}}</strong><text>已完成</text></view>
+        <view><strong>{{order.areaSummary.percent}}%</strong><text>综合进度</text></view>
+      </view>
+    </view>
+
+    <view wx:if="{{order.afterSalesCount || canOpenAfterSales}}" class="surface supply-entry" bindtap="openAfterSales">
+      <view><strong>售后与质保</strong><text wx:if="{{order.afterSalesActive}}">售后处理中 · {{order.afterSalesCount}} 单</text><text wx:elif="{{order.afterSalesCount}}">售后问题已解决 · {{order.afterSalesCount}} 单</text><text wx:else>客户已验收，可登记售后问题</text></view>
+      <text wx:if="{{canOpenAfterSales}}" class="supply-entry-arrow">去处理 ›</text>
+    </view>
+
+    <view wx:if="{{canOpenSupply}}" class="surface supply-entry" bindtap="openSupply">
+      <view><strong>包件与外购到货</strong><text>查看区域五金包数、外购产品计划和累计到货记录</text></view>
+      <text class="supply-entry-arrow">查看 ›</text>
+    </view>
+
+    <view wx:if="{{canReportMockPayment}}" class="design-mobile-actions">
+      <button class="primary-button" bindtap="openMockPaymentReport">补报定金与预付款</button>
+    </view>
+    <view wx:if="{{mockTailStatus}}" class="surface supply-entry">
+      <view><strong>发货前 · 尾款门禁</strong><text>{{mockTailStatus}}</text></view>
+    </view>
+    <view wx:if="{{canReportMockTail}}" class="design-mobile-actions">
+      <button class="primary-button" bindtap="openMockTailReport">报备尾款收款</button>
+    </view>
+
+    <view wx:if="{{canAdvanceMockPreReview}}" class="mock-review surface">
+      <view class="mock-review-title">本机流程测试</view>
+      <view class="mock-review-note">正式前置审单在电脑端办理；这里仅模拟通过，让技术岗位接到下一步待办。</view>
+      <button class="secondary-button" bindtap="advanceMockReview">模拟前置审单通过</button>
+    </view>
+
+    <view wx:if="{{canAdvanceMockTechnicalSplit || canAdvanceMockTechnicalReview || canReleaseMockPanel || canReleaseMockWoodPaint}}" class="mock-review surface">
+      <view class="mock-review-title">本机流程测试 · {{order.stageLabel}}</view>
+      <view class="mock-review-note">模拟操作只推进本机 TEST 订单。正式拆单、技术审单和采购确认仍须在网页版按资料办理。</view>
+      <button wx:if="{{canAdvanceMockTechnicalSplit}}" class="primary-button" bindtap="advanceMockSplit">模拟技术拆单 · 生成三区域</button>
+      <button wx:if="{{canAdvanceMockTechnicalReview}}" class="primary-button" bindtap="advanceMockTechReview">模拟技术审单通过</button>
+      <view wx:if="{{canReleaseMockPanel || canReleaseMockWoodPaint}}" class="mock-route-actions">
+        <button wx:if="{{canReleaseMockPanel}}" class="primary-button" data-kind="PANEL" bindtap="releaseMockRoute">放行板式路线</button>
+        <button wx:if="{{canReleaseMockWoodPaint}}" class="primary-button" data-kind="WOOD_PAINT" bindtap="releaseMockRoute">放行实木油漆路线</button>
+      </view>
+    </view>
+
+    <view wx:if="{{canReturnDesign || canTransferDesign || canSubmitDesign}}" class="design-mobile-actions {{canTransferDesign && canSubmitDesign ? 'two-actions' : ''}}">
+      <button wx:if="{{canReturnDesign}}" class="secondary-button" data-command="RETURN_DESIGN" bindtap="openDesignAction">退回销售</button>
+      <button wx:if="{{canTransferDesign}}" class="secondary-button" data-command="TRANSFER_DESIGN" bindtap="openDesignAction">转交设计师</button>
+      <button wx:if="{{canSubmitDesign}}" class="primary-button" bindtap="openDesignSubmit">填写设计资料</button>
+    </view>
+
+    <view wx:if="{{order.evidenceSummary}}" class="surface evidence-summary" bindtap="showDesktopEvidence">
+      <view class="evidence-head"><strong>设计与技术资料摘要</strong><text>查看说明</text></view>
+      <view class="evidence-grid"><view><strong>{{order.evidenceSummary.design.count}}</strong><text>设计附件</text><small>{{order.evidenceSummary.design.latestVersion || '暂无版本'}}</small></view><view><strong>{{order.evidenceSummary.technical.count}}</strong><text>技术附件</text><small>{{order.evidenceSummary.technical.latestVersion || '暂无版本'}}</small></view></view>
+      <view class="evidence-note">小程序仅显示数量、版本与提交状态，不返回大文件地址、物料解析原始数据或材料明细。</view>
+    </view>
+
+    <block wx:if="{{order.productionAreas.length}}">
+      <view class="section-title area-title">生产区域</view>
+      <view class="area-hint">选择一个区域查看它自己的生产编号和加工流程</view>
+      <scroll-view class="area-tabs" scroll-x="true" enhanced="true" show-scrollbar="false">
+        <view class="area-tabs-inner">
+          <view class="area-card {{selectedAreaId === item.id ? 'selected' : ''}}" wx:for="{{order.productionAreas}}" wx:key="id" data-id="{{item.id}}" bindtap="selectArea">
+            <view class="area-card-head"><strong>{{item.name}}</strong><text>{{item.percent}}%</text></view>
+            <view class="production-no">{{item.productionNumber}}</view>
+            <view class="area-card-foot"><text>{{item.routeLabel}}</text><strong>{{item.statusLabel}}</strong></view>
+          </view>
+        </view>
+      </scroll-view>
+
+      <view wx:if="{{selectedArea}}" class="surface area-detail">
+        <view class="area-detail-head">
+          <view><view class="selected-name">{{selectedArea.name}}</view><view class="selected-number">{{selectedArea.productionNumber}}</view></view>
+          <view class="area-percent">{{selectedArea.percent}}%</view>
+        </view>
+        <view class="route-row"><text>生产路线</text><strong>{{selectedArea.routeLabel}}</strong></view>
+        <view class="route-row"><text>最晚完成</text><strong>{{selectedArea.dueLabel}}</strong></view>
+        <progress percent="{{selectedArea.percent}}" stroke-width="8" activeColor="#00A98F" backgroundColor="#ECECEA" border-radius="8" />
+
+        <view wx:if="{{canOpenPackageCounts}}" class="assembly-package-entry">
+          <view><strong>组装包件台账</strong><text>确认五金领用，累计自产包件并统计完成</text></view>
+          <button class="primary-button" bindtap="openPackageCounts">办理包件</button>
+        </view>
+
+        <view class="workshop-flow" wx:for="{{selectedArea.workshopFlows}}" wx:key="key" wx:for-item="flow">
+          <view class="workshop-title"><strong>{{flow.label}}</strong><text>{{flow.processes.length}} 道工序</text></view>
+          <view class="process-row {{process.status}} {{process.canReport ? 'reportable' : ''}}" wx:for="{{flow.processes}}" wx:key="id" wx:for-item="process" data-task="{{process.canReport ? process.id : ''}}" bindtap="openProcess">
+            <view class="process-dot"></view>
+            <view class="process-main"><strong>{{process.title}}</strong><text wx:if="{{process.processCode === 'ASSEMBLY-02'}}">在组装包件台账确认五金领用</text><text wx:elif="{{process.processCode === 'ASSEMBLY-03'}}">在组装包件台账累计并确认入库包件</text><text wx:elif="{{process.plannedQty}}">{{process.completedQty}} / {{process.plannedQty}} {{process.unit}}</text><text wx:else>{{process.progressIncluded ? '里程碑工序' : '独立确认，不计生产进度'}}</text></view>
+            <view class="process-status">{{process.canReport ? '去报工' : process.statusLabel}}</view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <view class="surface journey-card">
+      <view class="stage-title">{{order.stageLabel}}</view>
+      <view class="muted">当前第 {{order.stageIndex}} / {{order.stageTotal}} 阶段</view>
+      <view class="journey-list">
+        <view class="journey-row {{item.state}}" wx:for="{{order.journey}}" wx:key="key">
+          <view class="dot"></view><view class="label">{{item.label}}</view><view class="state-text">{{item.state === 'complete' ? '已完成' : item.state === 'current' ? '进行中' : '未开始'}}</view>
+        </view>
+      </view>
+    </view>
+    <view class="surface facts">
+      <view><text>当前负责人</text><strong>{{order.currentOwnerLabel}}</strong></view>
+      <view><text>下一步</text><strong>{{order.nextAction}}</strong></view>
+      <view><text>当前任务截止</text><strong>{{order.currentTaskDueLabel || order.dueLabel}}</strong></view>
+      <view><text>风险</text><strong class="{{order.riskCount ? 'risk' : 'safe'}}">{{order.riskCount ? order.riskCount + ' 项待处理' : '暂无风险'}}</strong></view>
+    </view>
+  </block>
+</view>

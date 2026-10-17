@@ -1,0 +1,20 @@
+<view class="page-shell install-shell">
+  <view class="topbar"><button class="icon-button" bindtap="back">返回</button><view class="brand-title">{{mode === 'acceptance' ? '客户验收' : '安装工作区'}}</view><view class="top-spacer"></view></view>
+  <view class="page-title">{{mode === 'acceptance' ? '登记验收签字' : '完成本批安装'}}</view><view class="page-subtitle">{{order.salesNumber || order.trackingSerial}} · {{order.customerName}}</view>
+  <view wx:if="{{mode === 'installation'}}" class="surface task-card"><view><text>发货车次</text><strong>{{task.vehicle}}</strong></view><view><text>安装区域</text><strong>{{task.areas}}</strong></view><view><text>计划日期</text><strong>{{task.plannedAt}}</strong></view><view><text>项目地址</text><strong>{{task.address}}</strong></view><view><text>现场联系</text><strong>{{task.contact}}</strong></view><view><text>现场条件</text><strong>{{task.siteConditions}}</strong></view></view>
+
+  <block wx:if="{{mode === 'installation'}}">
+    <label class="form-label required">实际安装日期</label><picker mode="date" value="{{completionDate}}" bindchange="changeDate"><view class="form-picker {{completionDate ? '' : 'placeholder'}}">{{completionDate || '请选择日期'}}</view></picker>
+    <label class="form-label required">安装结果</label><picker range="{{results}}" value="{{resultIndex}}" bindchange="changeResult"><view class="form-picker picker-value">{{results[resultIndex]}}<text>›</text></view></picker>
+    <block wx:if="{{resultIndex === 0}}"><label class="form-label required">运输费</label><view class="money-field"><text>¥</text><input type="digit" data-field="transportCost" value="{{transportCost}}" bindinput="changeField" placeholder="0.00" /></view></block>
+    <label class="form-label">现场说明{{resultIndex > 0 ? '（必填）' : '（选填）'}}</label><textarea class="form-textarea" maxlength="500" data-field="note" value="{{note}}" bindinput="changeField" placeholder="完成情况、遗留问题或客户沟通结果" />
+    <label class="form-label required">安装现场照片</label><button class="secondary-button" bindtap="choosePhoto">拍照或从相册选择</button><view class="helper">{{attachments.length ? '已选择 ' + attachments.length + ' 张' : '至少一张，最多六张'}}</view>
+  </block>
+  <block wx:else>
+    <label class="form-label required">验收日期</label><picker mode="date" value="{{acceptanceDate}}" bindchange="changeDate"><view class="form-picker {{acceptanceDate ? '' : 'placeholder'}}">{{acceptanceDate || '请选择日期'}}</view></picker>
+    <label class="form-label required">验收结论</label><picker range="{{acceptanceResults}}" value="{{acceptanceIndex}}" bindchange="changeResult"><view class="form-picker picker-value">{{acceptanceResults[acceptanceIndex]}}<text>›</text></view></picker>
+    <label class="form-label required">客户签字材料</label><button class="secondary-button" bindtap="chooseSignature">{{signaturePath ? '已选择签字照片' : '拍摄或选择签字照片'}}</button>
+    <label class="form-label">验收说明（选填）</label><textarea class="form-textarea" maxlength="500" data-field="note" value="{{note}}" bindinput="changeField" placeholder="记录客户保留项或其他验收情况" />
+  </block>
+  <view class="button-row"><button class="secondary-button" bindtap="saveDraft">保存草稿</button><button class="primary-button" loading="{{submitting}}" bindtap="submit">检查并提交</button></view>
+</view>

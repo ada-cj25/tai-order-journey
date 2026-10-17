@@ -1,0 +1,14 @@
+.issue-shell { padding-bottom: 80rpx; }
+.top-spacer { width: 84rpx; }
+.loading-card { margin-top: 40rpx; padding: 70rpx 30rpx; color: var(--color-muted); text-align: center; }
+.issue-context { padding: 14rpx 30rpx; }
+.issue-context view { min-height: 84rpx; display: grid; grid-template-columns: 190rpx 1fr; align-items: center; gap: 18rpx; border-bottom: 2rpx solid var(--color-line); font-size: 23rpx; }
+.issue-context view:last-child { border-bottom: 0; }
+.issue-context text { color: var(--color-muted); }
+.issue-context strong { text-align: right; }
+.photo-grid { margin-bottom: 20rpx; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14rpx; }
+.photo-item { position: relative; height: 176rpx; overflow: hidden; border-radius: 24rpx; background: #e8e8e5; }
+.photo-item image { width: 100%; height: 100%; }
+.photo-item button { position: absolute; right: 8rpx; top: 8rpx; width: 46rpx; height: 46rpx; margin: 0; padding: 0; border-radius: 50%; background: rgba(0, 0, 0, .68); color: #fff; font-size: 31rpx; line-height: 42rpx; }
+.choose-photo { margin-top: 4rpx; }
+.submit { margin-top: 36rpx; }

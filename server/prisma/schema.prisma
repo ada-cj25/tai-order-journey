@@ -1,0 +1,1761 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Runtime session storage is part of the local deployment schema even though
+// authentication is managed by connect-pg-simple rather than Prisma.
+model UserSession {
+  sid    String   @id(map: "session_pkey") @db.VarChar
+  sess   Json
+  expire DateTime @db.Timestamp(6)
+
+  @@index([expire], map: "IDX_session_expire")
+  @@map("user_sessions")
+}
+
+enum Role {
+  CHAIRMAN
+  ORDER_ADMIN
+  FINANCE
+  SALES
+  DESIGNER
+  TECHNICAL
+  WAREHOUSE
+  PROCUREMENT
+  WORKSHOP
+  INSTALLER
+  AFTERSALES
+}
+
+enum AfterSalesStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+}
+
+enum BusinessType {
+  NOERLI_FORMAL
+  NOERLI_SUPPLEMENT
+  AIKEJU_FORMAL
+  AIKEJU_SUPPLEMENT
+  CHANNEL_FORMAL
+  CHANNEL_SUPPLEMENT
+  ENGINEERING_FORMAL
+  ENGINEERING_SUPPLEMENT
+  WORKWEAR_FORMAL
+  WORKWEAR_SUPPLEMENT
+}
+
+enum SiteType {
+  FINISHED
+  ROUGH
+}
+
+enum WorkflowStage {
+  DEPOSIT_PENDING
+  DESIGN_PENDING
+  DESIGN_ACCEPTED
+  PRE_REVIEW
+  TECHNICAL
+  TECH_REVIEW
+  MATERIALS
+  PRODUCTION
+  INSTALLATION_APPLICATION
+  DELIVERY
+  INSTALLATION
+  ACCEPTANCE
+  BUSINESS_COMPLETE
+}
+
+enum OrderCreationMode {
+  SALES_STANDARD
+  INTERNAL_EXCEPTION
+}
+
+enum OrderChargeMode {
+  CHARGED
+  FREE
+}
+
+enum TaskStatus {
+  PENDING
+  COMPLETE
+  OVERDUE
+  CANCELLED
+}
+
+enum InventoryMode {
+  ORDER_SPECIFIC
+  STOCK_STANDARD
+}
+
+enum TechnicalPackageStatus {
+  PREVIEW
+  SUBMITTED
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum MaterialVersionStatus {
+  DRAFT
+  PUBLISHED
+  WAREHOUSE_RELEASED
+  CANCELLED
+}
+
+enum MaterialReadinessClass {
+  PRODUCTION_REQUIRED
+  DELIVERY_READINESS
+}
+
+enum MaterialLineStatus {
+  PENDING_REVIEW
+  WAITING_STOCK_CHECK
+  STOCK_RESERVED
+  PURCHASE_REQUIRED
+  PARTIAL_RECEIVED
+  READY
+  CANCELLED
+}
+
+enum MaterialTemplateType {
+  HARDWARE_MATERIALS
+  PAINT_WOOD
+  SOLID_WOOD_DOOR
+  VENEER_DOOR
+}
+
+enum MaterialCostStatus {
+  WAITING_PRICE
+  COMPLETE
+}
+
+enum OutsourceRequirementMode {
+  UNDECLARED
+  NONE
+  REQUIRED
+  LEGACY_EXEMPT
+}
+
+enum OutsourceRequirementStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum ShipmentKind {
+  MANUFACTURED
+  OUTSOURCED
+}
+
+enum ProductionExecutionMode {
+  AREA_LEGACY
+  ROUTE_V2
+}
+
+enum ProductionRouteKind {
+  PANEL
+  WOOD_PAINT
+}
+
+enum StockReservationStatus {
+  ACTIVE
+  CONSUMED
+  RELEASED
+  CANCELLED
+}
+
+enum PurchaseRequirementStatus {
+  DRAFT
+  STOCK_RESERVED
+  PURCHASE_REQUIRED
+  REPLENISHMENT_SUGGESTED
+  QUOTING
+  PRICE_REVIEW
+  APPROVED
+  ORDERED
+  PARTIAL_RECEIVED
+  RECEIVED
+  CANCELLED
+}
+
+enum SupplierQuoteStatus {
+  DRAFT
+  PRICE_REVIEW
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum PurchaseOrderStatus {
+  DRAFT
+  PRICE_REVIEW
+  APPROVED
+  ISSUED
+  PARTIAL_RECEIVED
+  RECEIVED
+  CLOSED
+  RETURN_IN_PROGRESS
+  PARTIALLY_CANCELLED
+  TERMINATED
+}
+
+enum GoodsReceiptStatus {
+  DRAFT
+  ACCEPTED
+  PARTIAL_REJECTED
+  REJECTED
+}
+
+enum StockPolicyChangeStatus {
+  PROPOSED
+  APPROVED
+  REJECTED
+}
+
+model Employee {
+  id                 String   @id @default(uuid())
+  employeeNo         String   @unique
+  username           String   @unique
+  passwordHash       String
+  mustChangePassword Boolean  @default(false)
+  sessionVersion     Int      @default(0)
+  name               String
+  department         String
+  role               Role
+  level              String   @default("STAFF")
+  businessUnit       String?
+  workshop           String?
+  processCode        String?
+  processCodes       String[] @default([])
+  active             Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  salesOrders   Order[]        @relation("OrderSales")
+  designOrders  Order[]        @relation("OrderDesigner")
+  createdOrders Order[]        @relation("OrderCreator")
+  commerciallyConfirmedOrders Order[] @relation("OrderCommercialConfirmer")
+  ownedTasks    Task[]
+  events        OrderEvent[]
+  notifications Notification[]
+  miniInvitesCreated MiniProgramInvite[] @relation("MiniInviteCreator")
+  miniInvites        MiniProgramInvite[] @relation("MiniInviteEmployee")
+  miniBindings       MiniProgramBinding[]
+  miniSessions       MiniProgramSession[]
+  miniDrafts         MiniProgramDraft[]
+  assignedShipments  Shipment[]           @relation("ShipmentInstaller")
+  approvedCustomerGrants CustomerOrderGrant[] @relation("CustomerGrantApprover")
+  customerSupportReplies CustomerSupportReply[]
+}
+
+model MiniProgramInvite {
+  id          String    @id @default(uuid())
+  employeeId  String
+  tokenHash   String    @unique
+  expiresAt   DateTime
+  usedAt      DateTime?
+  revokedAt   DateTime?
+  createdById String
+  createdAt   DateTime  @default(now())
+
+  employee Employee @relation("MiniInviteEmployee", fields: [employeeId], references: [id], onDelete: Cascade)
+  createdBy Employee @relation("MiniInviteCreator", fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([employeeId, expiresAt])
+}
+
+model MiniProgramBinding {
+  id         String    @id @default(uuid())
+  appId      String
+  openIdHash String
+  employeeId String
+  inviteId   String?
+  boundAt    DateTime  @default(now())
+  revokedAt  DateTime?
+
+  employee Employee             @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  sessions MiniProgramSession[]
+
+  @@unique([appId, openIdHash])
+  @@unique([appId, employeeId])
+  @@index([employeeId, revokedAt])
+}
+
+model MiniProgramSession {
+  id               String    @id @default(uuid())
+  bindingId        String
+  employeeId       String
+  accessTokenHash  String    @unique
+  refreshTokenHash String    @unique
+  sessionVersion   Int
+  accessExpiresAt  DateTime
+  refreshExpiresAt DateTime
+  revokedAt        DateTime?
+  lastSeenAt       DateTime  @default(now())
+  createdAt        DateTime  @default(now())
+
+  binding  MiniProgramBinding @relation(fields: [bindingId], references: [id], onDelete: Cascade)
+  employee Employee           @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId, revokedAt, refreshExpiresAt])
+}
+
+model MiniProgramDraft {
+  id         String   @id @default(uuid())
+  employeeId String
+  kind       String
+  draftKey   String
+  payload    Json
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, kind, draftKey])
+  @@index([employeeId, updatedAt])
+}
+
+model Order {
+  id                       String                   @id @default(uuid())
+  trackingSerial           String                   @unique
+  salesNumber              String?                  @unique
+  productionNumber         String?                  @unique
+  legacyOrderNumber        String?
+  businessType             BusinessType
+  siteType                 SiteType
+  customerName             String
+  customerPhone            String
+  address                  String
+  amount                   Decimal?                 @db.Decimal(12, 2)
+  signedAt                 DateTime
+  standardDueAt            DateTime
+  promisedAt               DateTime
+  internalDueAt            DateTime
+  productionDueAt          DateTime?
+  designerAssignedAt       DateTime?
+  designIntakeAvailableAt  DateTime?
+  designIntakeDueAt        DateTime?
+  designAssignmentVersion  Int                      @default(0)
+  designAcceptedAt         DateTime?
+  designLeadDays           Int?
+  designDueAt              DateTime?
+  finishType               String                   @default("MELAMINE")
+  leatherDoor              Boolean                  @default(false)
+  villaFloors              Int                      @default(0)
+  rush                     Boolean                  @default(false)
+  rushReason               String?
+  rushPromisedAt           DateTime?
+  sundayRisk               Boolean                  @default(false)
+  stage                    WorkflowStage            @default(DEPOSIT_PENDING)
+  currentOwnerLabel        String
+  nextAction               String
+  riskCount                Int                      @default(0)
+  depositConfirmed         Boolean                  @default(false)
+  depositReported          Boolean                  @default(false)
+  prepaymentRequired       Boolean                  @default(false)
+  prepaymentConfirmed      Boolean                  @default(false)
+  prepaymentReported       Boolean                  @default(false)
+  tailPaymentConfirmed     Boolean                  @default(false)
+  tailPaymentReported      Boolean                  @default(false)
+  procurementPlanned       Boolean                  @default(false)
+  installationApplied      Boolean                  @default(false)
+  productionReady          Boolean                  @default(false)
+  materialSubstatus        String                   @default("待技术物料版")
+  hardwareReady            Boolean                  @default(false)
+  outsourceReady           Boolean                  @default(false)
+  outsourceRequirementMode OutsourceRequirementMode @default(UNDECLARED)
+  productionExecutionMode  ProductionExecutionMode  @default(ROUTE_V2)
+  finalAcceptedAt          DateTime?
+  parentOrderId            String?
+  supplementType           String?
+  responsibilityType       String?
+  supplementReason         String?
+  creationMode             OrderCreationMode        @default(SALES_STANDARD)
+  chargeMode               OrderChargeMode          @default(CHARGED)
+  createdById              String?
+  commercialConfirmedAt    DateTime?
+  commercialConfirmedBy    String?
+  exceptionReason          String?
+  freeReason               String?
+  salesId                  String?
+  designerId               String?
+  createdAt                DateTime                 @default(now())
+  updatedAt                DateTime                 @updatedAt
+
+  parent                Order?                        @relation("OrderSupplements", fields: [parentOrderId], references: [id])
+  supplements           Order[]                       @relation("OrderSupplements")
+  sales                 Employee?                     @relation("OrderSales", fields: [salesId], references: [id])
+  designer              Employee?                     @relation("OrderDesigner", fields: [designerId], references: [id])
+  creator               Employee?                     @relation("OrderCreator", fields: [createdById], references: [id])
+  commercialConfirmer   Employee?                     @relation("OrderCommercialConfirmer", fields: [commercialConfirmedBy], references: [id])
+  tasks                 Task[]
+  events                OrderEvent[]
+  demands               PurchaseDemand[]
+  stockMovements        StockMovement[]
+  aftersales            AfterSalesCase[]
+  afterSalesCostBatches AfterSalesCostBatch[]
+  attachments           Attachment[]
+  imports               HaixunImport[]
+  stageSubmissions      StageSubmission[]
+  productionProcesses   ProductionProcess[]
+  productionReports     ProductionReport[]
+  technicalPackages     TechnicalPackageVersion[]
+  materialImports       MaterialImportBatch[]
+  materialVersions      MaterialListVersion[]
+  purchaseRequirements  PurchaseRequirement[]
+  purchaseAllocations   PurchaseAllocation[]
+  materialCancellations MaterialVersionCancellation[]
+  materialCostVersions  OrderMaterialCostVersion[]
+  workshopCostVersions  OrderWorkshopCostVersion[]
+  procurementCompletion ProcurementCompletion?
+
+  procurementStartedAt   DateTime?
+  procurementDueAt       DateTime?
+  procurementCompletedAt DateTime?
+  procurementCompletedBy String?
+  procurementDelayDays   Int                 @default(0)
+  technicalAreasLockedAt DateTime?
+  materialCostStatus     MaterialCostStatus?
+  materialCostSubtotal   Decimal             @default(0) @db.Decimal(16, 2)
+  materialCostTotal      Decimal?            @db.Decimal(16, 2)
+
+  productionAreas              ProductionArea[]
+  technicalSubmissionSets      TechnicalSubmissionSet[]
+  outsourceRequirementVersions OutsourceRequirementVersion[]
+  outsourceProductLines        OutsourceProductLine[]
+  shipments                    Shipment[]
+  packageCountSources          PackageCountSource[]
+  productionRoutes             ProductionRoute[]
+  procurementRouteGates       ProcurementRouteGate[]
+  customerGrants              CustomerOrderGrant[]
+  customerSupportRequests     CustomerSupportRequest[]
+
+  @@index([stage, internalDueAt])
+  @@index([salesId, createdAt])
+  @@index([creationMode, chargeMode, commercialConfirmedAt])
+  @@index([createdById, createdAt])
+  @@index([designerId, stage])
+  @@index([stage, designIntakeDueAt])
+}
+
+model CustomerAccount {
+  id             String   @id @default(uuid())
+  phone          String   @unique
+  active         Boolean  @default(true)
+  sessionVersion Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  grants          CustomerOrderGrant[]
+  supportRequests CustomerSupportRequest[]
+}
+
+model CustomerOtp {
+  phone       String   @id
+  codeHash    String
+  expiresAt   DateTime
+  lastSentAt  DateTime
+  attempts    Int      @default(0)
+}
+
+model CustomerOrderGrant {
+  id           String    @id @default(uuid())
+  customerId   String
+  orderId      String
+  approvedById String
+  approvedAt   DateTime  @default(now())
+  revokedAt    DateTime?
+  revokedById  String?
+  reason       String
+
+  customer   CustomerAccount @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  order      Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  approvedBy Employee        @relation("CustomerGrantApprover", fields: [approvedById], references: [id])
+
+  @@unique([customerId, orderId])
+  @@index([orderId, revokedAt])
+}
+
+model CustomerSupportRequest {
+  id             String    @id @default(uuid())
+  customerId     String
+  orderId        String?
+  question       String
+  verifiedSummary String?
+  reason         String
+  status         String    @default("OPEN")
+  idempotencyKey String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  closedAt       DateTime?
+
+  customer CustomerAccount @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  order    Order?          @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  replies  CustomerSupportReply[]
+
+  @@unique([customerId, idempotencyKey])
+  @@index([status, createdAt])
+}
+
+model CustomerSupportReply {
+  id          String   @id @default(uuid())
+  requestId   String
+  employeeId  String
+  body        String
+  createdAt   DateTime @default(now())
+
+  request CustomerSupportRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  employee Employee               @relation(fields: [employeeId], references: [id])
+
+  @@index([requestId, createdAt])
+}
+
+model ProductionArea {
+  id                    String    @id @default(uuid())
+  orderId               String
+  name                  String
+  sequence              Int
+  productionNumber      String    @unique
+  status                String    @default("DRAFT")
+  lockedAt              DateTime?
+  cancelledAt           DateTime?
+  cancelReason          String?
+  productionCompletedAt DateTime?
+  shippedAt             DateTime?
+  createdBy             String
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  order                Order                       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  attachments          Attachment[]
+  technicalPackages    TechnicalPackageVersion[]
+  materialImports      MaterialImportBatch[]
+  materialVersions     MaterialListVersion[]
+  materialCostVersions OrderMaterialCostVersion[]
+  workshopCostVersions OrderWorkshopCostVersion[]
+  productionProcesses  ProductionProcess[]
+  productionReports    ProductionReport[]
+  procurementSnapshots ProcurementCompletionArea[]
+  shipmentAreas        ShipmentArea[]
+  packageCountSources  PackageCountSource[]
+  productionRoutes     ProductionRoute[]
+
+  @@unique([orderId, sequence])
+  @@index([orderId, status, sequence])
+}
+
+model ProductionProcess {
+  id               String    @id @default(uuid())
+  orderId          String
+  productionAreaId String?
+  productionRouteId String?
+  workshop         String
+  workshopLabel    String
+  processCode      String
+  processName      String
+  sequence         Int       @default(1)
+  plannedQty       Decimal   @db.Decimal(12, 3)
+  completedQty     Decimal   @default(0) @db.Decimal(12, 3)
+  unit             String    @default("件")
+  metricMode       String    @default("AREA_QUANTITY")
+  status           String    @default("PENDING")
+  startedAt        DateTime?
+  completedAt      DateTime?
+  lastReportedAt   DateTime?
+  note             String?
+  updatedBy        String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  order          Order              @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productionArea ProductionArea?    @relation(fields: [productionAreaId], references: [id], onDelete: Cascade)
+  productionRoute ProductionRoute?  @relation(fields: [productionRouteId], references: [id], onDelete: Cascade)
+  reports        ProductionReport[]
+
+  @@unique([productionRouteId, workshop, processCode])
+  @@index([orderId, workshop, sequence])
+  @@index([productionAreaId, workshop, sequence])
+  @@index([productionRouteId, workshop, sequence])
+}
+
+model ProductionRoute {
+  id                       String              @id @default(uuid())
+  orderId                  String
+  productionAreaId         String
+  technicalPackageId       String
+  procurementRouteGateId   String
+  kind                     ProductionRouteKind
+  assemblyPlanQty          Decimal             @db.Decimal(12, 3)
+  releasedAt               DateTime?
+  productionCompletedAt    DateTime?
+  shippedAt                DateTime?
+  cancelledAt              DateTime?
+  createdAt                DateTime             @default(now())
+  updatedAt                DateTime             @updatedAt
+
+  order                Order                   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productionArea       ProductionArea          @relation(fields: [productionAreaId], references: [id], onDelete: Cascade)
+  technicalPackage     TechnicalPackageVersion @relation(fields: [technicalPackageId], references: [id], onDelete: Restrict)
+  procurementRouteGate ProcurementRouteGate    @relation(fields: [procurementRouteGateId], references: [id], onDelete: Restrict)
+  productionProcesses  ProductionProcess[]
+  packageCountSources  PackageCountSource[]
+  shipmentLines        ShipmentRouteLine[]
+
+  @@unique([technicalPackageId, kind])
+  @@index([orderId, kind, releasedAt])
+  @@index([productionAreaId, kind, cancelledAt])
+}
+
+model ProductionReport {
+  id                  String   @id @default(uuid())
+  orderId             String
+  productionAreaId    String?
+  productionProcessId String
+  action              String
+  completedQty        Decimal  @db.Decimal(12, 3)
+  previousQty         Decimal  @db.Decimal(12, 3)
+  note                String?
+  attachmentIds       Json?
+  reportedBy          String
+  reportedAt          DateTime @default(now())
+
+  order          Order             @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productionArea ProductionArea?   @relation(fields: [productionAreaId], references: [id], onDelete: Cascade)
+  process        ProductionProcess @relation(fields: [productionProcessId], references: [id], onDelete: Cascade)
+
+  @@index([orderId, reportedAt])
+  @@index([productionProcessId, reportedAt])
+}
+
+model StageSubmission {
+  id          String        @id @default(uuid())
+  orderId     String
+  stage       WorkflowStage
+  command     String
+  version     String?
+  status      String        @default("SUBMITTED")
+  payload     Json
+  checklist   Json?
+  comment     String?
+  submittedBy String
+  reviewedBy  String?
+  submittedAt DateTime      @default(now())
+  reviewedAt  DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId, stage, createdAt])
+}
+
+model ProductionNumberSequence {
+  id        String   @id @default(uuid())
+  yearMonth String
+  category  Int
+  lastValue Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@unique([yearMonth, category])
+}
+
+model SalesNumberSequence {
+  id        String   @id @default(uuid())
+  yearMonth String
+  prefix    String
+  lastValue Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@unique([yearMonth, prefix])
+}
+
+model TechnicalSubmissionSet {
+  id            String    @id @default(uuid())
+  orderId       String
+  version       Int
+  status        String    @default("SUBMITTED")
+  submittedBy   String
+  reviewedBy    String?
+  reviewComment String?
+  submittedAt   DateTime  @default(now())
+  reviewedAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  order                       Order                        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  packages                    TechnicalPackageVersion[]
+  outsourceRequirementVersion OutsourceRequirementVersion?
+  procurementRouteGates        ProcurementRouteGate[]
+
+  @@unique([orderId, version])
+  @@index([orderId, status, submittedAt])
+}
+
+model OutsourceRequirementVersion {
+  id              String                     @id @default(uuid())
+  orderId         String
+  submissionSetId String?                    @unique
+  version         Int
+  status          OutsourceRequirementStatus @default(DRAFT)
+  declaresNone    Boolean                    @default(false)
+  submittedBy     String
+  reviewedBy      String?
+  reviewComment   String?
+  submittedAt     DateTime?
+  reviewedAt      DateTime?
+  createdAt       DateTime                   @default(now())
+  updatedAt       DateTime                   @updatedAt
+
+  order         Order                   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  submissionSet TechnicalSubmissionSet? @relation(fields: [submissionSetId], references: [id], onDelete: SetNull)
+  lines         OutsourceProductLine[]
+
+  @@unique([orderId, version])
+  @@index([orderId, status, createdAt])
+}
+
+model OutsourceProductLine {
+  id                   String   @id @default(uuid())
+  orderId              String
+  requirementVersionId String
+  presetCode           String?
+  name                 String
+  plannedQty           Decimal  @db.Decimal(12, 3)
+  unit                 String   @default("件")
+  usageArea            String?
+  note                 String?
+  sequence             Int
+  createdAt            DateTime @default(now())
+
+  order              Order                       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  requirementVersion OutsourceRequirementVersion @relation(fields: [requirementVersionId], references: [id], onDelete: Cascade)
+  arrivals           OutsourceArrival[]
+  shipmentLine       OutsourceShipmentLine?
+  packageCountSources PackageCountSource[]
+  costVersions       OutsourceProductCostVersion[]
+
+  @@unique([requirementVersionId, sequence])
+  @@index([orderId, sequence])
+}
+
+model OutsourceArrival {
+  id            String    @id @default(uuid())
+  productLineId String
+  quantity      Decimal   @db.Decimal(12, 3)
+  arrivedOn     DateTime
+  confirmedBy   String
+  voidedAt      DateTime?
+  voidedBy      String?
+  voidReason    String?
+  createdAt     DateTime  @default(now())
+
+  productLine OutsourceProductLine @relation(fields: [productLineId], references: [id], onDelete: Restrict)
+
+  @@index([productLineId, arrivedOn])
+}
+
+model OutsourceProductCostVersion {
+  id            String   @id @default(uuid())
+  productLineId String
+  version       Int
+  unitPrice     Decimal  @db.Decimal(16, 4)
+  createdBy     String
+  note          String?
+  createdAt     DateTime @default(now())
+
+  productLine OutsourceProductLine @relation(fields: [productLineId], references: [id], onDelete: Restrict)
+
+  @@unique([productLineId, version])
+  @@index([productLineId, createdAt])
+}
+
+model Task {
+  id             String         @id @default(uuid())
+  orderId        String
+  ownerId        String?
+  department     String
+  title          String
+  stage          WorkflowStage?
+  workshop       String?
+  dueAt          DateTime
+  plannedStartAt DateTime?
+  workloadDays   Int?
+  reminderAt     DateTime
+  status         TaskStatus     @default(PENDING)
+  completedAt    DateTime?
+  reminderSentAt DateTime?
+  escalatedAt    DateTime?
+  delayDays      Int            @default(0)
+  uniqueKey      String         @unique
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  order Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  owner Employee? @relation(fields: [ownerId], references: [id])
+
+  @@index([status, reminderAt, dueAt])
+}
+
+model OrderEvent {
+  id          String         @id @default(uuid())
+  orderId     String
+  actorId     String?
+  type        String
+  title       String
+  description String
+  fromStage   WorkflowStage?
+  toStage     WorkflowStage?
+  metadata    Json?
+  createdAt   DateTime       @default(now())
+
+  order Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  actor Employee? @relation(fields: [actorId], references: [id])
+
+  @@index([orderId, createdAt])
+}
+
+model Notification {
+  id         String    @id @default(uuid())
+  employeeId String
+  uniqueKey  String    @unique
+  level      String
+  title      String
+  body       String
+  readAt     DateTime?
+  createdAt  DateTime  @default(now())
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+}
+
+model PaymentAccount {
+  id            String    @id @default(uuid())
+  name          String    @unique
+  status        String    @default("PENDING")
+  requestedById String?
+  reviewedById  String?
+  reviewComment String?
+  requestedAt   DateTime  @default(now())
+  reviewedAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([status, requestedAt])
+}
+
+model InventoryItem {
+  id               String        @id @default(uuid())
+  sku              String        @unique
+  name             String
+  specification    String?
+  category         String        @default("GENERAL")
+  unit             String
+  mode             InventoryMode
+  onHand           Decimal       @default(0) @db.Decimal(12, 3)
+  reserved         Decimal       @default(0) @db.Decimal(12, 3)
+  minimumStock     Decimal?      @db.Decimal(12, 3)
+  targetStock      Decimal?      @db.Decimal(12, 3)
+  replenishmentLot Decimal?      @db.Decimal(12, 3)
+  approvedStandard Boolean       @default(false)
+  active           Boolean       @default(true)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  demands              PurchaseDemand[]
+  movements            StockMovement[]
+  materialLines        MaterialLine[]
+  reservations         StockReservation[]
+  stockPolicyVersions  StockPolicyVersion[]
+  purchaseRequirements PurchaseRequirement[]
+  purchaseOrderLines   PurchaseOrderLine[]
+  receiptLines         GoodsReceiptLine[]
+
+  @@index([name, specification])
+}
+
+model PurchaseDemand {
+  id              String        @id @default(uuid())
+  orderId         String?
+  itemId          String
+  mode            InventoryMode
+  requestedQty    Decimal       @db.Decimal(12, 3)
+  stockQty        Decimal       @default(0) @db.Decimal(12, 3)
+  purchaseQty     Decimal       @default(0) @db.Decimal(12, 3)
+  status          String        @default("DRAFT")
+  source          String
+  allocation      Json?
+  purchaseOrderNo String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  order Order?        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  item  InventoryItem @relation(fields: [itemId], references: [id])
+
+  @@index([orderId, status])
+}
+
+model StockMovement {
+  id             String   @id @default(uuid())
+  itemId         String
+  orderId        String?
+  internalUse    String?
+  quantity       Decimal  @db.Decimal(12, 3)
+  direction      String
+  materialLineId String?
+  referenceType  String?
+  referenceId    String?
+  location       String?
+  batchNo        String?
+  note           String?
+  createdAt      DateTime @default(now())
+
+  item  InventoryItem @relation(fields: [itemId], references: [id])
+  order Order?        @relation(fields: [orderId], references: [id])
+}
+
+model TechnicalPackageVersion {
+  id                        String                 @id @default(uuid())
+  orderId                   String
+  productionAreaId          String?
+  submissionSetId           String?
+  version                   Int
+  designVersion             String
+  status                    TechnicalPackageStatus @default(SUBMITTED)
+  haixunAttachmentId        String?
+  decompositionAttachmentId String?
+  haixunAttachmentIds        String[]               @default([])
+  decompositionAttachmentIds String[]               @default([])
+  materialAttachmentId      String
+  panelPlanQty              Decimal                @default(1) @db.Decimal(12, 3)
+  woodPlanQty               Decimal                @default(1) @db.Decimal(12, 3)
+  paintPlanQty              Decimal                @default(1) @db.Decimal(12, 3)
+  assemblyPlanQty           Decimal                @default(1) @db.Decimal(12, 3)
+  panelAssemblyPlanQty      Decimal?               @db.Decimal(12, 3)
+  woodPaintAssemblyPlanQty  Decimal?               @db.Decimal(12, 3)
+  firstBatchInstallationFee Decimal?               @db.Decimal(16, 2)
+  panelEnabled              Boolean                @default(true)
+  woodPaintEnabled          Boolean                @default(true)
+  veneerRequired            Boolean                @default(false)
+  validationSummary         String
+  rowCount                  Int
+  submittedBy               String
+  reviewedBy                String?
+  reviewComment             String?
+  submittedAt               DateTime               @default(now())
+  reviewedAt                DateTime?
+  createdAt                 DateTime               @default(now())
+  updatedAt                 DateTime               @updatedAt
+
+  order               Order                     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productionArea      ProductionArea?           @relation(fields: [productionAreaId], references: [id], onDelete: Cascade)
+  submissionSet       TechnicalSubmissionSet?   @relation(fields: [submissionSetId], references: [id], onDelete: SetNull)
+  materialImports     MaterialImportBatch[]
+  materialVersion     MaterialListVersion?
+  workshopCostVersion OrderWorkshopCostVersion?
+  productionRoutes    ProductionRoute[]
+
+  @@unique([productionAreaId, version])
+  @@index([orderId, version])
+  @@index([status, submittedAt])
+}
+
+model MaterialImportBatch {
+  id                     String                @id @default(uuid())
+  orderId                String
+  productionAreaId       String?
+  technicalPackageId     String?
+  templateType           MaterialTemplateType  @default(HARDWARE_MATERIALS)
+  parserVersion          String                @default("V1")
+  fingerprintVersion     String                @default("LEGACY-UNSPECIFIED")
+  sourceProductionNumber String?
+  valid                  Boolean               @default(false)
+  sourceAttachmentId     String
+  fileName               String
+  sheetName              String
+  status                 MaterialVersionStatus @default(DRAFT)
+  rawRows                Json
+  normalizedRows         Json
+  errors                 Json?
+  createdBy              String
+  cancelledBy            String?
+  cancelledAt            DateTime?
+  cancelReason           String?
+  createdAt              DateTime              @default(now())
+  updatedAt              DateTime              @updatedAt
+
+  order            Order                    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productionArea   ProductionArea?          @relation(fields: [productionAreaId], references: [id], onDelete: Cascade)
+  technicalPackage TechnicalPackageVersion? @relation(fields: [technicalPackageId], references: [id], onDelete: SetNull)
+
+  @@unique([technicalPackageId, templateType])
+  @@index([orderId, createdAt])
+  @@index([productionAreaId, status, templateType])
+}
+
+model MaterialListVersion {
+  id                   String                @id @default(uuid())
+  orderId              String
+  productionAreaId     String?
+  technicalPackageId   String                @unique
+  version              Int
+  status               MaterialVersionStatus @default(PUBLISHED)
+  releasedBy           String
+  releasedAt           DateTime              @default(now())
+  warehouseCheckedBy   String?
+  warehouseCheckedAt   DateTime?
+  productionReleasedAt DateTime?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+
+  order                 Order                         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productionArea        ProductionArea?               @relation(fields: [productionAreaId], references: [id], onDelete: Cascade)
+  technicalPackage      TechnicalPackageVersion       @relation(fields: [technicalPackageId], references: [id], onDelete: Restrict)
+  lines                 MaterialLine[]
+  requirements          PurchaseRequirement[]
+  allocations           PurchaseAllocation[]
+  cancellations         MaterialVersionCancellation[]
+  costVersion           OrderMaterialCostVersion?
+  procurementCompletion ProcurementCompletion?
+  procurementSnapshots  ProcurementCompletionArea[]
+
+  @@unique([productionAreaId, version])
+  @@index([orderId, version])
+  @@index([orderId, status])
+}
+
+model MaterialLine {
+  id                String                 @id @default(uuid())
+  materialVersionId String
+  itemId            String?
+  sourceFileName    String
+  sourceSheet       String
+  sourceRow         Int
+  sourceSubRow      String                 @default("A")
+  templateType      MaterialTemplateType   @default(HARDWARE_MATERIALS)
+  parserVersion     String                 @default("V1")
+  rawName           String
+  rawSpecification  String?
+  rawUnit           String?
+  rawActualValue    String?
+  rawPurchaseValue  String?
+  normalizedName    String
+  specification     String?
+  unit              String
+  category          String
+  actualQty         Decimal                @db.Decimal(16, 4)
+  lossRate          Decimal?               @db.Decimal(8, 4)
+  purchaseQty       Decimal                @db.Decimal(16, 4)
+  calculationSource String
+  inventoryMode     InventoryMode
+  readinessClass    MaterialReadinessClass
+  needsManualReview Boolean                @default(false)
+  manualReason      String?
+  correctedBy       String?
+  correctedAt       DateTime?
+  stockQty          Decimal                @default(0) @db.Decimal(16, 4)
+  receivedQty       Decimal                @default(0) @db.Decimal(16, 4)
+  status            MaterialLineStatus     @default(WAITING_STOCK_CHECK)
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+
+  materialVersion MaterialListVersion   @relation(fields: [materialVersionId], references: [id], onDelete: Cascade)
+  item            InventoryItem?        @relation(fields: [itemId], references: [id], onDelete: SetNull)
+  reservations    StockReservation[]
+  requirements    PurchaseRequirement[]
+
+  @@index([materialVersionId, status])
+  @@index([itemId])
+}
+
+model MaterialCostItem {
+  id               String             @id @default(uuid())
+  normalizedName   String
+  specification    String?
+  specificationKey String             @default("")
+  unit             String
+  category         String             @default("GENERAL")
+  status           MaterialCostStatus @default(WAITING_PRICE)
+  firstSource      String
+  firstSeenAt      DateTime           @default(now())
+  lastSeenAt       DateTime           @default(now())
+  lastPriceAt      DateTime?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  priceVersions MaterialCostPriceVersion[]
+  orderLines    OrderMaterialCostLine[]
+
+  @@unique([normalizedName, specificationKey, unit])
+  @@index([status, lastSeenAt])
+}
+
+model MaterialCostPriceVersion {
+  id          String   @id @default(uuid())
+  itemId      String
+  version     Int
+  unitPrice   Decimal  @db.Decimal(16, 4)
+  effectiveAt DateTime @default(now())
+  createdBy   String
+  note        String?
+  createdAt   DateTime @default(now())
+
+  item MaterialCostItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([itemId, version])
+  @@index([itemId, effectiveAt])
+}
+
+model OrderMaterialCostVersion {
+  id                String             @id @default(uuid())
+  orderId           String
+  productionAreaId  String?
+  materialVersionId String             @unique
+  version           Int
+  status            MaterialCostStatus @default(WAITING_PRICE)
+  pricedSubtotal    Decimal            @default(0) @db.Decimal(16, 2)
+  totalCost         Decimal?           @db.Decimal(16, 2)
+  missingPriceCount Int                @default(0)
+  recalculatedBy    String?
+  recalculatedAt    DateTime?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  order           Order                   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productionArea  ProductionArea?         @relation(fields: [productionAreaId], references: [id], onDelete: Cascade)
+  materialVersion MaterialListVersion     @relation(fields: [materialVersionId], references: [id], onDelete: Restrict)
+  lines           OrderMaterialCostLine[]
+
+  @@unique([productionAreaId, version])
+  @@index([orderId, version])
+  @@index([orderId, createdAt])
+}
+
+model OrderMaterialCostLine {
+  id                String   @id @default(uuid())
+  costVersionId     String
+  costItemId        String
+  quantity          Decimal  @db.Decimal(16, 4)
+  unit              String
+  unitPriceSnapshot Decimal? @db.Decimal(16, 4)
+  priceVersionId    String?
+  lineTotal         Decimal? @db.Decimal(16, 2)
+  sourceRefs        Json
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  costVersion OrderMaterialCostVersion @relation(fields: [costVersionId], references: [id], onDelete: Cascade)
+  costItem    MaterialCostItem         @relation(fields: [costItemId], references: [id], onDelete: Restrict)
+
+  @@unique([costVersionId, costItemId])
+  @@index([costItemId, unitPriceSnapshot])
+}
+
+model WorkshopCostRateVersion {
+  id          String   @id @default(uuid())
+  workshop    String
+  version     Int
+  unitPrice   Decimal  @db.Decimal(16, 4)
+  effectiveAt DateTime @default(now())
+  createdBy   String
+  note        String?
+  createdAt   DateTime @default(now())
+
+  orderLines OrderWorkshopCostLine[]
+
+  @@unique([workshop, version])
+  @@index([workshop, effectiveAt])
+}
+
+model OrderWorkshopCostVersion {
+  id                 String   @id @default(uuid())
+  orderId            String
+  productionAreaId   String
+  technicalPackageId String   @unique
+  version            Int
+  totalCost          Decimal  @default(0) @db.Decimal(16, 2)
+  createdAt          DateTime @default(now())
+
+  order            Order                   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productionArea   ProductionArea          @relation(fields: [productionAreaId], references: [id], onDelete: Cascade)
+  technicalPackage TechnicalPackageVersion @relation(fields: [technicalPackageId], references: [id], onDelete: Restrict)
+  lines            OrderWorkshopCostLine[]
+
+  @@unique([productionAreaId, version])
+  @@index([orderId, createdAt])
+}
+
+model OrderWorkshopCostLine {
+  id                String   @id @default(uuid())
+  costVersionId     String
+  workshop          String
+  workshopLabel     String
+  quantity          Decimal  @db.Decimal(12, 3)
+  unit              String   @default("㎡")
+  unitPriceSnapshot Decimal  @db.Decimal(16, 4)
+  rateVersionId     String
+  lineTotal         Decimal  @db.Decimal(16, 2)
+  routeBreakdown    Json?
+  createdAt         DateTime @default(now())
+
+  costVersion OrderWorkshopCostVersion @relation(fields: [costVersionId], references: [id], onDelete: Cascade)
+  rateVersion WorkshopCostRateVersion  @relation(fields: [rateVersionId], references: [id], onDelete: Restrict)
+
+  @@unique([costVersionId, workshop])
+  @@index([rateVersionId])
+}
+
+model ProcurementCompletion {
+  id                String   @id @default(uuid())
+  orderId           String   @unique
+  materialVersionId String?  @unique
+  startedAt         DateTime
+  dueAt             DateTime
+  completedAt       DateTime
+  completedBy       String
+  delayDays         Int      @default(0)
+  attested          Boolean  @default(true)
+  costComplete      Boolean  @default(false)
+  createdAt         DateTime @default(now())
+
+  order           Order                       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  materialVersion MaterialListVersion?        @relation(fields: [materialVersionId], references: [id], onDelete: Restrict)
+  areas           ProcurementCompletionArea[]
+
+  @@index([dueAt, completedAt])
+}
+
+model ProcurementCompletionArea {
+  id                      String @id @default(uuid())
+  procurementCompletionId String
+  productionAreaId        String
+  materialVersionId       String
+
+  procurementCompletion ProcurementCompletion @relation(fields: [procurementCompletionId], references: [id], onDelete: Cascade)
+  productionArea        ProductionArea        @relation(fields: [productionAreaId], references: [id], onDelete: Restrict)
+  materialVersion       MaterialListVersion   @relation(fields: [materialVersionId], references: [id], onDelete: Restrict)
+
+  @@unique([procurementCompletionId, productionAreaId])
+  @@unique([procurementCompletionId, materialVersionId])
+}
+
+model ProcurementRouteGate {
+  id                String              @id @default(uuid())
+  orderId           String
+  submissionSetId   String
+  kind              ProductionRouteKind
+  startedAt         DateTime
+  dueAt             DateTime
+  completedAt       DateTime?
+  completedBy       String?
+  delayDays         Int                 @default(0)
+  attested          Boolean             @default(false)
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+
+  order         Order                  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  submissionSet TechnicalSubmissionSet @relation(fields: [submissionSetId], references: [id], onDelete: Restrict)
+  routes        ProductionRoute[]
+
+  @@unique([submissionSetId, kind])
+  @@index([orderId, completedAt, dueAt])
+}
+
+model Shipment {
+  id                             String       @id @default(uuid())
+  orderId                        String
+  kind                           ShipmentKind @default(MANUFACTURED)
+  vehicle                        String
+  deliveredAt                    DateTime
+  installationDepartment         String?
+  assignedInstallerId            String?
+  installationTeamLabel          String?
+  siteContact                    String?
+  plannedInstallationAt          DateTime?
+  siteConditions                 String?
+  pieceCount                     Int?
+  countBasis                     String       @default("NOT_RECORDED")
+  submittedBy                    String
+  transportCost                  Decimal?     @db.Decimal(16, 2)
+  installedAt                    DateTime?
+  installer                      String?
+  issueConclusion                String?
+  installationPhotoAttachmentIds Json?
+  installationCompletedBy        String?
+  createdAt                      DateTime     @default(now())
+
+  order          Order                   @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  assignedInstaller Employee?             @relation("ShipmentInstaller", fields: [assignedInstallerId], references: [id], onDelete: Restrict)
+  areas          ShipmentArea[]
+  outsourceLines OutsourceShipmentLine[]
+
+  @@index([orderId, deliveredAt])
+  @@index([assignedInstallerId, installedAt])
+}
+
+model PackageCountSource {
+  id                       String    @id @default(uuid())
+  orderId                  String
+  sourceKey                String    @unique
+  kind                     String
+  productionAreaId         String?
+  productionRouteId        String?
+  outsourceProductLineId   String?
+  status                   String    @default("OPEN")
+  finalizedBy              String?
+  finalizedAt              DateTime?
+  handoffConfirmedBy       String?
+  handoffConfirmedAt       DateTime?
+  reopenedAt               DateTime?
+  reopenReason             String?
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+
+  order                  Order                  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productionArea         ProductionArea?        @relation(fields: [productionAreaId], references: [id], onDelete: Cascade)
+  productionRoute        ProductionRoute?       @relation(fields: [productionRouteId], references: [id], onDelete: Cascade)
+  outsourceProductLine   OutsourceProductLine?  @relation(fields: [outsourceProductLineId], references: [id], onDelete: Cascade)
+  entries                PackageCountEntry[]
+
+  @@index([orderId, kind, status])
+  @@index([productionAreaId])
+  @@index([productionRouteId])
+  @@index([outsourceProductLineId])
+}
+
+model PackageCountEntry {
+  id          String    @id @default(uuid())
+  sourceId    String
+  quantity    Int
+  recordedBy  String
+  recordedAt  DateTime  @default(now())
+  voidedAt    DateTime?
+  voidedBy    String?
+  voidReason  String?
+
+  source PackageCountSource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  @@index([sourceId, recordedAt])
+}
+
+model OutsourceShipmentLine {
+  id            String  @id @default(uuid())
+  shipmentId    String
+  productLineId String  @unique
+  productName   String
+  plannedQty    Decimal @db.Decimal(12, 3)
+  unit          String
+  usageArea     String?
+
+  shipment    Shipment             @relation(fields: [shipmentId], references: [id], onDelete: Restrict)
+  productLine OutsourceProductLine @relation(fields: [productLineId], references: [id], onDelete: Restrict)
+
+  @@index([shipmentId])
+}
+
+model ShipmentArea {
+  id                        String   @id @default(uuid())
+  shipmentId                String
+  productionAreaId          String
+  productionNumber          String
+  areaName                  String
+  sequence                  Int
+  pieceCount                Int?
+  isFinalBatch              Boolean  @default(false)
+  installationFee           Decimal? @db.Decimal(16, 2)
+  installationFeeSource     String?
+  installationFeeRecordedBy String?
+
+  shipment       Shipment       @relation(fields: [shipmentId], references: [id], onDelete: Restrict)
+  productionArea ProductionArea @relation(fields: [productionAreaId], references: [id], onDelete: Restrict)
+  routeLines     ShipmentRouteLine[]
+
+  @@unique([shipmentId, productionAreaId])
+  @@unique([productionAreaId, sequence])
+  @@index([shipmentId])
+}
+
+model ShipmentRouteLine {
+  id                String              @id @default(uuid())
+  shipmentAreaId    String
+  productionRouteId String
+  routeKind         ProductionRouteKind
+  routeLabel        String
+  sequence          Int
+  isFinalBatch      Boolean             @default(false)
+  createdAt         DateTime             @default(now())
+
+  shipmentArea    ShipmentArea    @relation(fields: [shipmentAreaId], references: [id], onDelete: Restrict)
+  productionRoute ProductionRoute @relation(fields: [productionRouteId], references: [id], onDelete: Restrict)
+
+  @@unique([productionRouteId, sequence])
+  @@index([shipmentAreaId])
+}
+
+model StockReservation {
+  id             String                 @id @default(uuid())
+  orderId        String
+  materialLineId String
+  itemId         String
+  quantity       Decimal                @db.Decimal(16, 4)
+  status         StockReservationStatus @default(ACTIVE)
+  location       String?
+  batchNo        String?
+  reservedBy     String
+  reservedAt     DateTime               @default(now())
+  releasedAt     DateTime?
+
+  materialLine MaterialLine  @relation(fields: [materialLineId], references: [id], onDelete: Cascade)
+  item         InventoryItem @relation(fields: [itemId], references: [id], onDelete: Restrict)
+
+  @@index([orderId, status])
+  @@index([itemId, status])
+}
+
+model StockPolicyVersion {
+  id               String                  @id @default(uuid())
+  itemId           String
+  version          Int
+  status           StockPolicyChangeStatus @default(PROPOSED)
+  minimumStock     Decimal?                @db.Decimal(16, 4)
+  targetStock      Decimal?                @db.Decimal(16, 4)
+  replenishmentLot Decimal?                @db.Decimal(16, 4)
+  proposedBy       String
+  approvedBy       String?
+  reason           String
+  proposedAt       DateTime                @default(now())
+  reviewedAt       DateTime?
+
+  item InventoryItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([itemId, version])
+  @@index([status, proposedAt])
+}
+
+model PurchaseRequirement {
+  id                String                    @id @default(uuid())
+  orderId           String?
+  materialVersionId String?
+  materialLineId    String?
+  itemId            String
+  mode              InventoryMode
+  requestedQty      Decimal                   @db.Decimal(16, 4)
+  stockQty          Decimal                   @default(0) @db.Decimal(16, 4)
+  purchaseQty       Decimal                   @default(0) @db.Decimal(16, 4)
+  orderedQty        Decimal                   @default(0) @db.Decimal(16, 4)
+  receivedQty       Decimal                   @default(0) @db.Decimal(16, 4)
+  status            PurchaseRequirementStatus @default(DRAFT)
+  source            String
+  requiredAt        DateTime?
+  riskLevel         String                    @default("NORMAL")
+  allocation        Json?
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+
+  order           Order?               @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  materialVersion MaterialListVersion? @relation(fields: [materialVersionId], references: [id], onDelete: SetNull)
+  materialLine    MaterialLine?        @relation(fields: [materialLineId], references: [id], onDelete: SetNull)
+  item            InventoryItem        @relation(fields: [itemId], references: [id], onDelete: Restrict)
+  quotes          SupplierQuote[]
+  allocations     PurchaseAllocation[]
+
+  @@index([orderId, status])
+  @@index([status, requiredAt])
+}
+
+model Supplier {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  name      String
+  contact   String?
+  phone     String?
+  taxNo     String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  quotes         SupplierQuote[]
+  purchaseOrders PurchaseOrder[]
+}
+
+model SupplierQuote {
+  id              String              @id @default(uuid())
+  requirementId   String
+  supplierId      String
+  status          SupplierQuoteStatus @default(DRAFT)
+  unitPrice       Decimal             @db.Decimal(16, 4)
+  taxRate         Decimal             @default(0) @db.Decimal(8, 4)
+  freight         Decimal             @default(0) @db.Decimal(16, 2)
+  minimumOrderQty Decimal?            @db.Decimal(16, 4)
+  deliveryAt      DateTime
+  validUntil      DateTime?
+  attachmentIds   Json?
+  note            String?
+  submittedBy     String
+  reviewedBy      String?
+  reviewComment   String?
+  submittedAt     DateTime            @default(now())
+  reviewedAt      DateTime?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  requirement       PurchaseRequirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+  supplier          Supplier            @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+  purchaseOrderLine PurchaseOrderLine?
+
+  @@index([status, submittedAt])
+}
+
+model PurchaseOrder {
+  id          String              @id @default(uuid())
+  orderNo     String              @unique
+  supplierId  String
+  status      PurchaseOrderStatus @default(APPROVED)
+  currency    String              @default("CNY")
+  totalAmount Decimal             @default(0) @db.Decimal(16, 2)
+  expectedAt  DateTime?
+  approvedAt  DateTime?
+  issuedAt    DateTime?
+  issuedBy    String?
+  note        String?
+  createdBy   String
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  supplier Supplier            @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+  lines    PurchaseOrderLine[]
+  receipts GoodsReceipt[]
+
+  @@index([status, expectedAt])
+}
+
+model PurchaseOrderLine {
+  id              String   @id @default(uuid())
+  purchaseOrderId String
+  quoteId         String   @unique
+  itemId          String
+  specification   String?
+  unit            String
+  quantity        Decimal  @db.Decimal(16, 4)
+  unitPrice       Decimal  @db.Decimal(16, 4)
+  taxRate         Decimal  @default(0) @db.Decimal(8, 4)
+  receivedQty     Decimal  @default(0) @db.Decimal(16, 4)
+  cancelledQty    Decimal  @default(0) @db.Decimal(16, 4)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  purchaseOrder PurchaseOrder        @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  quote         SupplierQuote        @relation(fields: [quoteId], references: [id], onDelete: Restrict)
+  item          InventoryItem        @relation(fields: [itemId], references: [id], onDelete: Restrict)
+  allocations   PurchaseAllocation[]
+  receiptLines  GoodsReceiptLine[]
+  returns       PurchaseReturn[]
+
+  @@index([purchaseOrderId])
+}
+
+model PurchaseAllocation {
+  id                  String   @id @default(uuid())
+  purchaseOrderLineId String
+  requirementId       String
+  orderId             String?
+  materialVersionId   String?
+  quantity            Decimal  @db.Decimal(16, 4)
+  receivedQty         Decimal  @default(0) @db.Decimal(16, 4)
+  createdAt           DateTime @default(now())
+
+  purchaseOrderLine PurchaseOrderLine    @relation(fields: [purchaseOrderLineId], references: [id], onDelete: Cascade)
+  requirement       PurchaseRequirement  @relation(fields: [requirementId], references: [id], onDelete: Restrict)
+  order             Order?               @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  materialVersion   MaterialListVersion? @relation(fields: [materialVersionId], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+  @@index([requirementId])
+}
+
+model GoodsReceipt {
+  id                    String             @id @default(uuid())
+  receiptNo             String             @unique
+  purchaseOrderId       String
+  status                GoodsReceiptStatus @default(ACCEPTED)
+  supplierDeliveryNo    String?
+  deliveryAttachmentIds Json?
+  receivedBy            String
+  receivedAt            DateTime
+  note                  String?
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+
+  purchaseOrder PurchaseOrder      @relation(fields: [purchaseOrderId], references: [id], onDelete: Restrict)
+  lines         GoodsReceiptLine[]
+
+  @@index([purchaseOrderId, receivedAt])
+}
+
+model GoodsReceiptLine {
+  id                   String   @id @default(uuid())
+  receiptId            String
+  purchaseOrderLineId  String
+  itemId               String
+  deliveredQty         Decimal  @db.Decimal(16, 4)
+  acceptedQty          Decimal  @default(0) @db.Decimal(16, 4)
+  rejectedQty          Decimal  @default(0) @db.Decimal(16, 4)
+  shortageQty          Decimal  @default(0) @db.Decimal(16, 4)
+  photoAttachmentIds   Json?
+  qualityAttachmentIds Json?
+  note                 String?
+  createdAt            DateTime @default(now())
+
+  receipt           GoodsReceipt      @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+  purchaseOrderLine PurchaseOrderLine @relation(fields: [purchaseOrderLineId], references: [id], onDelete: Restrict)
+  item              InventoryItem     @relation(fields: [itemId], references: [id], onDelete: Restrict)
+  returns           PurchaseReturn[]
+
+  @@index([purchaseOrderLineId])
+}
+
+model PurchaseReturn {
+  id                  String    @id @default(uuid())
+  purchaseOrderLineId String
+  receiptLineId       String?
+  quantity            Decimal   @db.Decimal(16, 4)
+  resolution          String
+  status              String    @default("OPEN")
+  note                String?
+  createdBy           String
+  createdAt           DateTime  @default(now())
+  completedAt         DateTime?
+
+  purchaseOrderLine PurchaseOrderLine @relation(fields: [purchaseOrderLineId], references: [id], onDelete: Restrict)
+  receiptLine       GoodsReceiptLine? @relation(fields: [receiptLineId], references: [id], onDelete: SetNull)
+}
+
+model MaterialVersionCancellation {
+  id                 String   @id @default(uuid())
+  orderId            String
+  materialVersionId  String
+  reason             String
+  supplierResolution Json?
+  receivedResolution Json?
+  status             String   @default("COMPLETED")
+  requestedBy        String
+  createdAt          DateTime @default(now())
+
+  order           Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  materialVersion MaterialListVersion @relation(fields: [materialVersionId], references: [id], onDelete: Restrict)
+
+  @@index([orderId, createdAt])
+}
+
+model AfterSalesCase {
+  id                String    @id @default(uuid())
+  orderId           String
+  caseNumber        String    @unique
+  status            AfterSalesStatus @default(OPEN)
+  issueType         String
+  description       String
+  warrantyYears     Int?
+  warrantyStartsAt  DateTime?
+  warrantyExpiresAt DateTime?
+  startedAt         DateTime?
+  resolvedAt        DateTime?
+  resolution        String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  order       Order                @relation(fields: [orderId], references: [id])
+  costBatches AfterSalesCostBatch[]
+}
+
+model AfterSalesCostBatch {
+  id            String    @id @default(uuid())
+  afterSalesId  String
+  orderId       String
+  incurredOn    DateTime
+  amount        Decimal   @db.Decimal(16, 2)
+  description   String
+  attachmentIds Json?
+  recordedBy    String
+  recordedAt    DateTime  @default(now())
+  voidedAt      DateTime?
+  voidedBy      String?
+  voidReason    String?
+
+  afterSales AfterSalesCase @relation(fields: [afterSalesId], references: [id], onDelete: Cascade)
+  order      Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([afterSalesId, recordedAt])
+  @@index([orderId, voidedAt])
+}
+
+model Attachment {
+  id               String   @id @default(uuid())
+  orderId          String
+  productionAreaId String?
+  category         String
+  originalName     String
+  storageKey       String   @unique
+  storageProvider  String   @default("local")
+  sha256           String?
+  mimeType         String
+  size             Int
+  uploadedBy       String
+  createdAt        DateTime @default(now())
+
+  order          Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productionArea ProductionArea? @relation(fields: [productionAreaId], references: [id], onDelete: Cascade)
+}
+
+model SecurityAudit {
+  id        String   @id @default(uuid())
+  actorId   String?
+  targetId  String?
+  action    String
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model LoginAttempt {
+  key       String   @id
+  attempts  Int      @default(1)
+  expiresAt DateTime
+}
+
+model MutationReceipt {
+  id          String   @id @default(uuid())
+  actorId     String
+  scope       String
+  key         String
+  fingerprint String
+  result      Json
+  createdAt   DateTime @default(now())
+
+  @@unique([actorId, scope, key])
+}
+
+model HaixunImport {
+  id          String    @id @default(uuid())
+  orderId     String
+  version     Int
+  status      String    @default("PREVIEW")
+  fileName    String
+  uploadedBy  String
+  preview     Json
+  errors      Json?
+  reviewedBy  String?
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@unique([orderId, version])
+}

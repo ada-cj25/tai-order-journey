@@ -1,0 +1,53 @@
+.tai-mobile { min-height: 100vh; color: #17231f; background: #f2f6f4; }
+.tai-mobile button { touch-action: manipulation; }
+.tai-mobile-centered { display: grid; place-items: center; padding: 22px; }
+.tai-mobile-centered > .ant-card { width: min(100%, 430px); }
+.tai-mobile-header,.tai-mobile-home-header { position: sticky; top: 0; z-index: 20; height: 60px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,.96); border-bottom: 1px solid #dce6e2; backdrop-filter: blur(12px); }
+.tai-mobile-header > div { display: grid; justify-items: center; gap: 1px; }.tai-mobile-header strong { font-size: 15px; }.tai-mobile-header span { color: #7c8985; font-size: 10px; }
+.tai-mobile-brand { display: flex; align-items: center; gap: 9px; }.tai-mobile-brand > div { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 11px; color: #052920; background: #24d4b2; font-size: 18px; font-weight: 800; }.tai-mobile-brand span { display: grid; }.tai-mobile-brand strong { font-size: 15px; }.tai-mobile-brand small { color: #75847f; font-size: 9px; letter-spacing: .6px; }
+.tai-mobile-body { width: min(100%, 620px); margin: 0 auto; padding: 18px 14px 36px; }
+.tai-mobile-welcome { padding: 9px 3px 16px; }.tai-mobile-welcome > span,.tai-mobile-kicker { color: #078a74; font-size: 10px; font-weight: 700; letter-spacing: .8px; }.tai-mobile-welcome h2 { margin: 5px 0 !important; font-size: 23px !important; }.tai-mobile-welcome p,.tai-mobile-hero p { margin: 0; color: #73817c; font-size: 11px; }
+.tai-mobile-metrics { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; margin-bottom: 14px; }.tai-mobile-metrics .ant-card-body { min-height: 91px; padding: 12px 10px; display: grid; align-content: center; gap: 3px; }.tai-mobile-metrics svg { color: #0b8a75; }.tai-mobile-metrics span { color: #788681; font-size: 9px; }.tai-mobile-metrics strong { font-size: 20px; }.tai-mobile .danger { color: #ca4841 !important; }
+.tai-mobile-order-list { display: grid; gap: 10px; margin-top: 14px; }.tai-mobile-order-list > button { width: 100%; padding: 15px; text-align: left; border: 1px solid #dce6e2; border-radius: 10px; background: #fff; box-shadow: 0 5px 18px rgba(20,45,38,.04); }.tai-mobile-order-list > button:active { transform: scale(.995); background: #f4fbf8; }.tai-mobile-order-list header { display: flex; justify-content: space-between; gap: 10px; }.tai-mobile-order-list header > div { min-width: 0; display: grid; gap: 3px; }.tai-mobile-order-list header strong { color: #176f91; font: 700 13px ui-monospace,SFMono-Regular,Menlo,monospace; }.tai-mobile-order-list header small { overflow: hidden; color: #7c8985; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }.tai-mobile-order-list dl { margin: 13px 0 0; display: grid; grid-template-columns: .8fr 1.5fr .8fr; gap: 7px; }.tai-mobile-order-list dl div { min-width: 0; }.tai-mobile-order-list dt,.tai-mobile-summary dt { color: #899590; font-size: 9px; }.tai-mobile-order-list dd,.tai-mobile-summary dd { margin: 3px 0 0; overflow: hidden; font-size: 11px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.tai-mobile-footer { padding: 24px 0 4px; display: flex; flex-wrap: wrap; justify-content: center; gap: 5px 10px; text-align: center; color: #91a09b; font-size: 9px; }.tai-mobile-footer span { flex-basis: 100%; }.tai-mobile-footer a { color: #71857e; }
+.tai-mobile-hero { border-color: #cfe2dc; background: linear-gradient(145deg,#fff,#f0faf7); }.tai-mobile-hero .ant-card-body { position: relative; }.tai-mobile-hero h3 { margin: 6px 0 3px !important; color: #176f91; font: 700 22px ui-monospace,SFMono-Regular,Menlo,monospace !important; }.tai-mobile-hero .ant-tag { position: absolute; top: 17px; right: 16px; }
+.tai-mobile-card { margin-top: 11px; border-color: #dce6e2; }.tai-mobile-card .ant-card-head { min-height: 45px; }.tai-mobile-card .ant-card-head-title { font-size: 12px; }.tai-mobile-card .ant-card-body { padding: 15px; }
+.tai-mobile-stages { display: flex; gap: 12px; overflow-x: auto; padding: 3px 1px 8px; scrollbar-width: thin; }.tai-mobile-stages > div { flex: 0 0 65px; display: grid; justify-items: center; gap: 5px; color: #8b9793; }.tai-mobile-stages i { width: 24px; height: 24px; display: grid; place-items: center; border: 2px solid #ced8d4; border-radius: 50%; background: #fff; font-size: 9px; font-style: normal; font-weight: 700; }.tai-mobile-stages span { font-size: 9px; white-space: nowrap; }.tai-mobile-stages .done i { border-color: #00a98f; color: #fff; background: #00a98f; }.tai-mobile-stages .current i { border-color: #00a98f; color: #078a74; box-shadow: 0 0 0 4px rgba(0,169,143,.1); }.tai-mobile-stages .current span { color: #078a74; font-weight: 700; }
+.tai-mobile-facts { margin: 0; display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #e3ebe8; border-radius: 8px; overflow: hidden; }.tai-mobile-facts > div { min-height: 76px; padding: 12px; border-right: 1px solid #edf2f0; border-bottom: 1px solid #edf2f0; }.tai-mobile-facts > div:nth-child(2n) { border-right: 0; }.tai-mobile-facts > div:nth-child(n+3) { border-bottom: 0; }.tai-mobile-facts dt { display: flex; align-items: center; gap: 5px; color: #85918d; font-size: 9px; }.tai-mobile-facts dd { margin: 7px 0 0; font-size: 12px; font-weight: 700; }.tai-mobile-facts dd.accent { color: #078a74; }
+.tai-mobile-gates { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }.tai-mobile-gates > div { min-height: 72px; padding: 12px; display: grid; grid-template-columns: 22px 1fr; align-content: center; gap: 2px 6px; border: 1px solid #e1e9e6; border-radius: 8px; }.tai-mobile-gates svg { grid-row: span 2; }.tai-mobile-gates span { color: #7c8985; font-size: 9px; }.tai-mobile-gates strong { font-size: 11px; }.tai-mobile-gates .ok { color: #078a74; background: #eff9f6; }.tai-mobile-gates .waiting { color: #bf7a20; background: #fff9ef; }
+.tai-mobile-tracks { display:grid; gap:12px; }.tai-mobile-tracks > section { padding:12px; border:1px solid #e3ebe8; border-radius:9px; background:#fff; }.tai-mobile-tracks header { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px; }.tai-mobile-tracks header strong { font-size:11px; }.tai-mobile-tracks .tai-mobile-gates { grid-template-columns:1fr; }.tai-mobile-outsource-lines { display:grid; gap:7px; }.tai-mobile-outsource-lines > div { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 0; border-top:1px solid #edf2f0; }.tai-mobile-outsource-lines span { display:grid; gap:2px; }.tai-mobile-outsource-lines strong { font-size:10px; }.tai-mobile-outsource-lines small,.tai-mobile-track-note { margin:0; color:#7c8985; font-size:9px; }
+.tai-mobile-risks { display: grid; gap: 9px; }.tai-mobile-risks article { padding: 12px; display: grid; gap: 5px; border-left: 3px solid #dc8b28; border-radius: 6px; background: #fff9ef; }.tai-mobile-risks p { margin: 0; color: #59655f; font-size: 11px; line-height: 1.55; }.tai-mobile-risks small { color: #7b8782; font-size: 9px; }.tai-mobile-risks .ant-tag { width: max-content; margin-top: 3px; }
+.tai-mobile-summary { margin: 0; display: grid; gap: 11px; }.tai-mobile-summary > div { padding-bottom: 10px; border-bottom: 1px solid #edf2f0; }.tai-mobile-summary > div:last-child { padding-bottom: 0; border-bottom: 0; }.tai-mobile-summary dd { white-space: normal; line-height: 1.5; }
+.tai-mobile-timeline { display: grid; }.tai-mobile-timeline article { display: grid; grid-template-columns: 15px 1fr; gap: 8px; }.tai-mobile-timeline article > i { position: relative; width: 8px; height: 8px; margin-top: 5px; border: 2px solid #00a98f; border-radius: 50%; }.tai-mobile-timeline article:not(:last-child) > i::after { content: ""; position: absolute; top: 7px; left: 1px; width: 2px; height: calc(100% + 54px); background: #dce7e3; }.tai-mobile-timeline article > div { padding-bottom: 17px; }.tai-mobile-timeline p { margin: 3px 0; color: #67746f; font-size: 10px; line-height: 1.55; }.tai-mobile-timeline small { color: #8a9692; font-size: 9px; }
+@media (max-width: 370px) { .tai-mobile-metrics { grid-template-columns: 1fr; }.tai-mobile-metrics .ant-card-body { min-height: 68px; grid-template-columns: 24px 1fr auto; align-items: center; }.tai-mobile-order-list dl { grid-template-columns: 1fr 1fr; }.tai-mobile-order-list dl > div:nth-child(2) { grid-column: 1 / -1; grid-row: 2; } }
+
+/* Mobile readonly keeps the desktop journal palette without the decorative motion. */
+.tai-mobile { color:#433638; background:#fff7f1; }
+.tai-mobile-header,
+.tai-mobile-home-header { background:rgba(255,253,249,.95); border-bottom-color:#eadbd7; }
+.tai-mobile-brand > div { color:#673c47; background:#f2bcc6; box-shadow:0 5px 13px rgba(116,74,75,.12); }
+.tai-mobile-brand small,
+.tai-mobile-header span,
+.tai-mobile-welcome p,
+.tai-mobile-hero p { color:#897675; }
+.tai-mobile-welcome > span,
+.tai-mobile-kicker { color:#a65366; }
+.tai-mobile-metrics .ant-card,
+.tai-mobile-order-list > button,
+.tai-mobile-card { background:#fffdf9; border-color:#eadbd7; box-shadow:0 8px 24px rgba(116,74,75,.07); }
+.tai-mobile-metrics svg { color:#a65366; }
+.tai-mobile-order-list > button:active { background:#fff1ef; }
+.tai-mobile-order-list header strong,
+.tai-mobile-hero h3 { color:#9b5264; }
+.tai-mobile-hero { border-color:#e7c8cd; background:linear-gradient(145deg,#fffdf9,#fff0ef); }
+.tai-mobile-stages .done i { border-color:#b85f73; background:#b85f73; }
+.tai-mobile-stages .current i { border-color:#b85f73; color:#a65366; box-shadow:0 0 0 4px rgba(184,95,115,.1); }
+.tai-mobile-stages .current span { color:#a65366; }
+.tai-mobile-facts { border-color:#eadbd7; }
+.tai-mobile-facts > div { border-color:#f2e7e3; }
+.tai-mobile-gates .ok { color:#5f806d; background:#f1f7f2; }
+.tai-mobile-gates .waiting,
+.tai-mobile-risks article { background:#fff7ee; }
+.tai-mobile-tracks > section { border-color:#ead8d8; background:#fffdfd; }
+.tai-mobile-timeline article > i { border-color:#b85f73; }
+.tai-mobile-timeline article:not(:last-child) > i::after { background:#ead8d8; }

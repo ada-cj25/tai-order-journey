@@ -1,0 +1,40 @@
+{
+  admin off
+}
+
+www.{$ERP_HOST} {
+  redir https://{$ERP_HOST}{uri} permanent
+}
+
+{$ERP_HOST} {
+  encode zstd gzip
+
+  request_body {
+    max_size 41MB
+  }
+
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "DENY"
+    Referrer-Policy "same-origin"
+    Permissions-Policy "camera=(), geolocation=(), microphone=()"
+    -Server
+  }
+
+  @api path /api/*
+  handle @api {
+    reverse_proxy api:3000
+  }
+
+  handle {
+    root * /srv
+    try_files {path} /index.html
+    file_server
+  }
+
+  log {
+    output stdout
+    format json
+  }
+}

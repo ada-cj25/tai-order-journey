@@ -1,0 +1,34 @@
+<view class="page-shell tasks-shell">
+  <view class="topbar">
+    <view class="brand-lockup"><image class="brand-logo" src="/assets/brand-logo.png" mode="aspectFill" aria-label="苔的跟单旅程 Logo" /><view class="brand-title">苔的跟单旅程</view></view>
+    <button class="icon-button" aria-label="消息" bindtap="openNotifications"><image class="message-icon" src="/assets/icons/message.svg" mode="aspectFit" aria-hidden="true" /></button>
+  </view>
+
+  <view class="task-title-row">
+    <view><view class="page-title">{{pageTitle}}</view><view class="page-subtitle">{{employee.department}} · {{employee.name}}</view></view>
+    <view class="task-count"><strong>{{taskCount}}</strong><text>个区域工序</text></view>
+  </view>
+  <view class="sync-line {{offline ? 'offline' : ''}}"><view></view>{{syncText}} · 下拉可刷新</view>
+
+  <view wx:if="{{loading}}" class="surface empty-card">正在同步可报工任务…</view>
+  <view wx:elif="{{!tasks.length}}" class="surface empty-card"><strong>{{filter === 'issue' ? '本车间当前没有异常' : '当前没有可报工工序'}}</strong><text>{{filter === 'issue' ? '异常发生后会进入这里，主管仍需逐项处理' : '等待前序完成的任务仍可在“追踪”里查看'}}</text></view>
+
+  <view class="work-card {{task.urgency}}" wx:for="{{tasks}}" wx:key="id" wx:for-item="task">
+    <view class="work-head">
+      <view class="order-identity"><strong>{{task.customerName}}</strong><text>{{task.salesNumber}}</text></view>
+      <view class="urgency-pill {{task.urgency}}">{{task.urgencyLabel}}</view>
+    </view>
+    <view class="area-line"><strong>{{task.productionAreaName}}</strong><text>{{task.productionNumber}}</text></view>
+    <view class="process-line">
+      <view><text>{{task.routeLabel}}</text><strong>{{task.title}}</strong></view>
+      <view class="quantity"><strong>{{task.completedQty}}</strong><text>/{{task.plannedQty}}{{task.unit}}</text></view>
+    </view>
+    <view class="progress-track"><view style="width: {{task.plannedQty ? task.completedQty / task.plannedQty * 100 : 0}}%"></view></view>
+    <view class="work-meta"><text>{{task.statusLabel}}</text><strong>{{task.dueLabel}}</strong></view>
+    <view class="work-actions">
+      <button class="issue-button" data-task-id="{{task.id}}" bindtap="issue">报告问题</button>
+      <button class="report-button" data-task-id="{{task.id}}" bindtap="report">{{task.state === 'IN_PROGRESS' || task.state === 'ISSUE' ? '继续报工' : '开始报工'}}</button>
+    </view>
+  </view>
+</view>
+<bottom-nav active="tasks" />

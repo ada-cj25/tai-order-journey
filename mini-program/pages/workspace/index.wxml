@@ -1,0 +1,24 @@
+<view class="page-shell workspace-shell">
+  <view class="topbar">
+    <view class="brand-lockup"><image class="brand-logo" src="/assets/brand-logo.png" mode="aspectFill" /><view><view class="brand-title">苔的跟单旅程</view><view class="role-caption">{{employee.roleLabel}}</view></view></view>
+    <button class="icon-button message-button" aria-label="消息" bindtap="openNotifications"><image class="message-icon" src="/assets/icons/message.svg" mode="aspectFit" /><view wx:if="{{workbench.unreadCount}}" class="unread-dot">{{workbench.unreadCount}}</view></button>
+  </view>
+
+  <view wx:if="{{workbench}}">
+    <view class="workspace-title"><view class="page-title">{{workbench.title}}</view><view class="page-subtitle">{{workbench.subtitle}}</view><view class="sync-line {{offline ? 'offline' : ''}}">{{syncText}}</view></view>
+    <view wx:if="{{workbench.scopeTitle}}" class="scope-card"><strong>{{workbench.scopeTitle}}</strong><text>{{workbench.scopeDescription}}</text></view>
+    <view class="summary-grid">
+      <view class="summary-item {{item.tone}}" wx:for="{{workbench.stats}}" wx:key="key"><strong>{{item.value}}</strong><text>{{item.label}}</text></view>
+    </view>
+    <view class="queue-head"><view class="section-title">当前待办</view><text>{{workbench.tasks.length}} 项</text></view>
+    <view wx:if="{{!workbench.tasks.length}}" class="surface empty-card">当前没有需要处理的任务</view>
+    <view class="surface work-task {{item.urgency}}" wx:for="{{workbench.tasks}}" wx:key="id" data-route="{{item.actionRoute}}" data-desktop="{{item.presentation === 'DESKTOP_HANDOFF' || item.desktopOnly}}" data-identifier="{{item.desktopHandoff.identifier}}" data-module="{{item.desktopHandoff.moduleLabel}}" data-reason="{{item.desktopHandoff.reason}}" bindtap="openTask">
+      <view class="task-top"><view class="task-order"><strong>{{item.customerName}}</strong><text>{{item.salesNumber || item.trackingSerial}}</text></view><view class="urgency-tag">{{item.urgencyLabel}}</view></view>
+      <view class="task-title">{{item.title}}<text wx:if="{{item.presentation === 'DESKTOP_HANDOFF'}}" class="desktop-tag">电脑端</text></view>
+      <view class="task-description">{{item.description}}</view>
+      <view class="task-bottom"><text>{{item.dueLabel}}</text><strong>{{item.actionLabel || '查看详情'}}</strong></view>
+    </view>
+  </view>
+  <view wx:else class="surface empty-card">正在加载工作台…</view>
+</view>
+<bottom-nav active="workspace" />

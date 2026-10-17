@@ -1,0 +1,12 @@
+.installation-list-shell { padding-bottom: calc(220rpx + env(safe-area-inset-bottom)); }
+.empty-card { margin-top: 24rpx; padding: 54rpx 30rpx; color: var(--color-muted); text-align: center; font-size: 29rpx; }
+.install-card { margin-top: 20rpx; padding: 30rpx; }
+.install-card-head, .install-card-foot { display: flex; justify-content: space-between; align-items: center; gap: 20rpx; }
+.install-card-head strong { font-size: 34rpx; }
+.install-card-head text { padding: 10rpx 16rpx; border-radius: 16rpx; background: #e5f5f0; color: #0b6b59; font-size: 25rpx; }
+.install-card-number { margin-top: 8rpx; color: var(--color-muted); font-size: 27rpx; word-break: break-all; }
+.install-card-title { margin-top: 28rpx; font-size: 32rpx; font-weight: 700; }
+.install-card-detail { margin-top: 12rpx; color: #59615d; font-size: 27rpx; line-height: 1.5; }
+.install-card-foot { margin-top: 27rpx; padding-top: 22rpx; border-top: 2rpx solid var(--color-line); font-size: 26rpx; }
+.install-card-foot text { color: var(--color-muted); }
+.install-card-foot strong { color: #0b493d; }

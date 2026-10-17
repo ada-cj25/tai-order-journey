@@ -1,0 +1,41 @@
+.center-shell { padding-bottom: 220rpx; }
+.top-spacer { width: 84rpx; }
+.center-heading .page-title { margin-top: 40rpx; }
+.account-request, .procurement-order, .route-card, .account-card, .hardware-list { margin-bottom: 20rpx; padding: 30rpx; }
+.card-title { margin-bottom: 22rpx; font-size: 30rpx; font-weight: 750; }
+.compact-action { height: 84rpx; margin-top: 22rpx; font-size: 26rpx; }
+.account-head, .route-head, .task-head, .task-foot, .hardware-row { display: flex; align-items: center; justify-content: space-between; gap: 18rpx; }
+.account-head strong, .route-head strong { font-size: 28rpx; }
+.status { padding: 7rpx 13rpx; border-radius: 16rpx; color: #7a7d7b; background: #eef0ef; font-size: 20rpx; }
+.status.PENDING { color: #a96a08; background: #fff6df; }
+.status.APPROVED { color: #08735f; background: #e8f7f3; }
+.status.REJECTED { color: #b94c40; background: #fff0ee; }
+.small-textarea { width: 100%; min-height: 130rpx; margin-top: 22rpx; padding: 20rpx 24rpx; box-sizing: border-box; border: 2rpx solid #ececea; border-radius: 22rpx; background: #fff; font-size: 25rpx; }
+.dual-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 18rpx; margin-top: 18rpx; }
+.dual-actions button { height: 82rpx; font-size: 26rpx; }
+.review-note, .route-areas, .procurement-order view { margin-top: 15rpx; color: #7e817f; font-size: 23rpx; line-height: 1.55; }
+.procurement-order strong, .procurement-order text { display: block; }
+.procurement-order strong { font-size: 34rpx; }
+.procurement-order text { margin-top: 7rpx; color: #0b493d; font-weight: 650; }
+.override-box { margin: 20rpx 0; padding: 24rpx; border-radius: 28rpx; background: #fff8e9; }
+.hardware-row { position: relative; padding: 20rpx 0; border-bottom: 2rpx solid #efefed; }
+.hardware-summary { margin-bottom: 10rpx; color: #68726d; font-size: 23rpx; }
+.hardware-summary strong { color: #0b493d; }
+.hardware-row > view { min-width: 0; flex: 1; }
+.hardware-row strong, .hardware-row view text { display: block; }
+.hardware-row view text { margin-top: 5rpx; color: #8b8d91; font-size: 20rpx; }
+.hardware-row input { width: 150rpx; height: 72rpx; padding: 0 48rpx 0 18rpx; box-sizing: border-box; border: 2rpx solid #e5e6e4; border-radius: 20rpx; text-align: right; }
+.hardware-row .unit { position: absolute; right: 17rpx; color: #777; font-size: 22rpx; }
+.center-task { margin-bottom: 18rpx; padding: 28rpx 30rpx; }
+.task-head > view { min-width: 0; }
+.task-head strong, .task-head view text { display: block; }
+.task-head strong { font-size: 27rpx; }
+.task-head view text { margin-top: 6rpx; color: #8b8d91; font-size: 21rpx; }
+.task-status { flex: 0 0 auto; color: #a06c17; font-size: 21rpx; }
+.task-name { margin-top: 22rpx; font-size: 32rpx; font-weight: 800; }
+.desktop-tag { display: inline-block; margin-left: 12rpx; padding: 5rpx 10rpx; border-radius: 12rpx; background: #eef0ef; color: #757876; font-size: 18rpx; }
+.task-description { margin-top: 9rpx; color: #737675; font-size: 24rpx; line-height: 1.55; }
+.task-foot { margin-top: 21rpx; padding-top: 19rpx; border-top: 2rpx solid #efefed; }
+.task-foot text { color: #8b8d91; font-size: 21rpx; }
+.task-foot strong { color: #0b493d; font-size: 23rpx; }
+.empty-card { padding: 50rpx 30rpx; color: #8b8d91; text-align: center; }

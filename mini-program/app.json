@@ -1,0 +1,35 @@
+{
+  "pages": [
+    "pages/login/index",
+    "pages/workspace/index",
+    "pages/orders/index",
+    "pages/notifications/index",
+    "pages/tracking/index",
+    "pages/tasks/index",
+    "pages/scan/index",
+    "pages/profile/index",
+    "pages/order-detail/index",
+    "pages/report/index",
+    "pages/package-count/index",
+    "pages/supply/index",
+    "pages/issue/index",
+    "pages/sales-create/index",
+    "pages/tail-payment/index",
+    "pages/shipment-list/index",
+    "pages/shipment/index",
+    "pages/installation-list/index",
+    "pages/installation/index",
+    "pages/aftersales/index",
+    "pages/role-center/index",
+    "pages/role-action/index",
+    "pages/design-submit/index",
+    "pages/webview/index"
+  ],
+  "window": {
+    "navigationStyle": "custom",
+    "backgroundColor": "#F4F4F2",
+    "backgroundTextStyle": "dark"
+  },
+  "lazyCodeLoading": "requiredComponents",
+  "sitemapLocation": "sitemap.json"
+}

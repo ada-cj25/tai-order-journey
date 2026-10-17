@@ -1,0 +1,18 @@
+<view class="page-shell scan-shell">
+  <view class="topbar"><view class="brand-lockup"><image class="brand-logo" src="/assets/brand-logo.png" mode="aspectFill" aria-label="苔的跟单旅程 Logo" /><view class="brand-title">苔的跟单旅程</view></view><view></view></view>
+  <view class="page-title">扫码报工</view>
+  <view class="page-subtitle">扫描生产区域二维码，系统再匹配你被分配且已经解锁的具体工序</view>
+  <view class="surface scan-card">
+    <view class="scan-title">对准生产区域二维码</view>
+    <view class="scan-copy">二维码绑定生产编号，只用于定位区域，不包含客户地址或登录凭证。</view>
+    <button class="primary-button" loading="{{scanning}}" bindtap="startScan">打开相机扫码</button>
+  </view>
+  <view class="surface guard-card">
+    <view class="guard-row"><text>未登录</text><strong>拒绝报工</strong></view>
+    <view class="guard-row"><text>跨车间或未分配工序</text><strong>拒绝报工</strong></view>
+    <view class="guard-row"><text>前序尚未完成</text><strong>说明等待原因</strong></view>
+    <view class="guard-row"><text>同一区域有多项可做工序</text><strong>先选择工序</strong></view>
+  </view>
+  <view class="helper scan-helper">本地模拟二维码定位到：周女士 · 儿童房 · TEST-DEMO-AREA-01。真实环境同样先识别生产编号，再由服务端核对人员、路线和前序状态。</view>
+</view>
+<bottom-nav active="scan" />

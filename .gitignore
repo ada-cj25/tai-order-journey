@@ -1,0 +1,35 @@
+node_modules/
+dist/
+.env
+.env.local
+.env.*
+!.env.example
+deploy/*.env
+!deploy/*.env.example
+*.pem
+*.key
+*.p12
+backups/
+server/dist/
+server/generated/
+server/uploads/
+customer-agent/.venv/
+customer-agent/.models/
+customer-agent/__pycache__/
+*.log
+.DS_Store
+
+# 本地验收截图与照片转录产物可能包含业务资料，仅保留在工作区。
+design-audit/
+outputs/
+
+# Private business data and generated local acceptance artifacts stay outside Git.
+test-results/
+scripts/seed-fang-cost-samples.ts
+scripts/seed-material-preview-samples.ts
+scripts/test-fang-cost-local.ts
+server/domain/fang-cost.test.ts
+server/prisma/seed-fang-prices.ts
+server/prisma/seed-hardware-prices.ts
+tests/fang-cost-fixture.ts
+tests/fixtures/fang-cost-20260830.json

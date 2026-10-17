@@ -1,0 +1,37 @@
+name: ERP verification (no deployment)
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env: { POSTGRES_USER: erp_test, POSTGRES_PASSWORD: ci-isolated-only, POSTGRES_DB: postgres }
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      TZ: Asia/Shanghai
+      ERP_TEST_COMPILED: "true"
+      TEST_DATABASE_ADMIN_URL: postgresql://erp_test:ci-isolated-only@127.0.0.1:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "24", cache: npm }
+      - run: npm ci
+      - run: npm run db:generate
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run test:workflow
+      - run: npm run test:deploy
+      - run: npm run build
+      - run: npm run build:api
+      - run: npm run test:integration
+      - run: npm run test:sites
+      - run: docker build --target api -t erp-api:verify .
+      - run: docker build --target migrate -t erp-migrate:verify .
+      - run: docker build --target backup-tool -t erp-backup:verify .
+      - run: docker build --target personal-web -t erp-personal-web:verify .
+      - run: docker build --target web -t erp-web:verify .
+      - run: npm audit --omit=dev --audit-level=high

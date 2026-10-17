@@ -1,0 +1,164 @@
+.login-checking,
+.login-prelude {
+  min-height: 100vh;
+  box-sizing: border-box;
+  background-color: #06251f;
+}
+
+.login-checking { width: 100%; }
+
+.login-prelude {
+  padding: calc(env(safe-area-inset-top) + 18rpx) 22rpx calc(env(safe-area-inset-bottom) + 22rpx);
+  overflow-y: auto;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, .88) 0 3rpx, transparent 4rpx);
+  background-size: 54rpx 54rpx;
+}
+
+.prelude-paper {
+  min-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 62rpx);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 2rpx solid #c8d9d2;
+  border-radius: 38rpx;
+  background: #fffdf9;
+  box-shadow: 0 24rpx 60rpx rgba(0, 0, 0, .3), 0 0 0 9rpx rgba(255, 255, 255, .07);
+}
+
+.prelude-bar {
+  min-height: 92rpx;
+  padding: 0 28rpx;
+  display: flex;
+  align-items: center;
+  border-bottom: 2rpx solid #dfe8e4;
+  background: #f5f8f6;
+}
+
+.prelude-mark { display: flex; align-items: center; gap: 16rpx; color: #345c50; }
+.prelude-mark text { font-size: 19rpx; font-weight: 700; letter-spacing: 4rpx; }
+.prelude-logo {
+  width: 52rpx;
+  height: 52rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15rpx;
+  color: #fff;
+  background: #18b99e;
+  font-size: 29rpx;
+  font-weight: 700;
+}
+
+.prelude-content {
+  min-height: 0;
+  flex: 1;
+  padding: 42rpx 30rpx 24rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 34rpx;
+}
+
+.prelude-scene { display: flex; flex-direction: column; align-items: center; gap: 18rpx; }
+.prelude-art {
+  width: 430rpx;
+  height: 430rpx;
+  max-width: 66vw;
+  max-height: 66vw;
+  display: block;
+  border-radius: 18rpx;
+  background: #fff;
+}
+.prelude-art-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7f918a;
+  font-size: 26rpx;
+  letter-spacing: 6rpx;
+}
+.prelude-weather {
+  min-height: 50rpx;
+  box-sizing: border-box;
+  padding: 9rpx 19rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2rpx solid #d7e4df;
+  border-radius: 999rpx;
+  color: #43665b;
+  background: #f6faf8;
+  font-size: 21rpx;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+}
+
+.prelude-title { display: flex; flex-direction: column; align-items: center; gap: 12rpx; text-align: center; }
+.prelude-title .prelude-eyebrow { color: #77978d; font-size: 18rpx; font-weight: 800; letter-spacing: 7rpx; }
+.prelude-title view {
+  color: #254a3f;
+  font-family: "STKaiti", "KaiTi", serif;
+  font-size: 52rpx;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 9rpx;
+}
+.prelude-title > text:last-child { color: #87928e; font-size: 22rpx; line-height: 1.6; letter-spacing: 2rpx; }
+
+.prelude-enter {
+  width: 340rpx;
+  min-height: 116rpx;
+  flex: 0 0 auto;
+  margin: 0 auto;
+  padding: 18rpx 24rpx 22rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6rpx;
+  border-top: 2rpx solid #dce7e3;
+  border-radius: 0;
+  color: #315a4e;
+  background: transparent;
+  line-height: 1.35;
+}
+.prelude-enter strong { font-size: 25rpx; letter-spacing: 4rpx; }
+.prelude-enter text { color: #929d99; font-size: 19rpx; letter-spacing: 2rpx; }
+.prelude-enter-active { color: #0b6b59; background: #f0f7f4; }
+
+.login-shell { min-height: 100vh; box-sizing: border-box; padding: calc(env(safe-area-inset-top) + 58rpx) 44rpx 70rpx; background: #f4f4f2; }
+.login-test-switch { margin-top: 24rpx; color: #0b493d; background: transparent; font-size: 24rpx; }
+.login-brand { display: flex; align-items: center; gap: 16rpx; }
+.login-brand image { width: 72rpx; height: 72rpx; border-radius: 50%; }
+.login-brand strong, .login-brand text { display: block; }
+.login-brand strong { font-size: 32rpx; }
+.login-brand text { margin-top: 5rpx; color: #8b8d91; font-size: 21rpx; letter-spacing: 3rpx; }
+.login-copy { margin: 78rpx 4rpx 44rpx; }
+.eyebrow { color: #0b493d; font-size: 23rpx; font-weight: 750; letter-spacing: 5rpx; }
+.login-title { margin-top: 22rpx; font-size: 58rpx; line-height: 1.2; font-weight: 850; letter-spacing: -3rpx; }
+.login-subtitle { margin-top: 22rpx; color: #7f8281; font-size: 28rpx; line-height: 1.7; }
+.login-panel { padding: 22rpx 30rpx; }
+.panel-head { min-height: 84rpx; display: flex; align-items: center; justify-content: space-between; gap: 20rpx; border-bottom: 2rpx solid #efefed; }
+.panel-head strong { font-size: 28rpx; }
+.panel-head text { color: #8b8d91; font-size: 21rpx; }
+.account-row { min-height: 122rpx; display: grid; grid-template-columns: 76rpx 1fr auto; align-items: center; gap: 20rpx; border-bottom: 2rpx solid #efefed; }
+.account-row:last-child { border-bottom: 0; }
+.account-avatar { width: 70rpx; height: 70rpx; display: flex; align-items: center; justify-content: center; border-radius: 25rpx; background: #e7f5f1; color: #0b493d; font-size: 29rpx; font-weight: 800; }
+.account-main strong, .account-main text { display: block; }
+.account-main strong { font-size: 29rpx; }
+.account-main text { margin-top: 8rpx; color: #8b8d91; font-size: 22rpx; }
+.account-enter { color: #0b493d; font-size: 23rpx; font-weight: 750; }
+.login-button { margin-top: 34rpx; }
+.login-helper { margin: 22rpx 6rpx 10rpx; color: #8b8d91; font-size: 23rpx; line-height: 1.6; }
+.login-foot { margin-top: 34rpx; color: #a1a3a2; text-align: center; font-size: 21rpx; line-height: 1.55; }
+
+@media screen and (max-height: 700px) {
+  .prelude-content { padding-top: 24rpx; padding-bottom: 16rpx; gap: 20rpx; }
+  .prelude-art { width: 350rpx; height: 350rpx; }
+  .prelude-scene { gap: 12rpx; }
+  .prelude-title { gap: 7rpx; }
+  .prelude-title view { font-size: 44rpx; }
+  .prelude-enter { min-height: 98rpx; padding-top: 12rpx; padding-bottom: 16rpx; }
+}

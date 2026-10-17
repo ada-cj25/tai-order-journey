@@ -1,0 +1,103 @@
+page {
+  --color-bg: #f4f4f2;
+  --color-surface: #ffffff;
+  --color-ink: #111111;
+  --color-muted: #8b8d91;
+  --color-line: #ececea;
+  --color-forest: #0b493d;
+  --color-teal: #00a98f;
+  --color-warning: #e6a52e;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 30rpx;
+}
+
+button::after { border: 0; }
+
+.page-shell {
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: calc(env(safe-area-inset-top) + 52rpx) 44rpx 220rpx;
+}
+
+.topbar {
+  min-height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24rpx;
+}
+
+.brand-lockup {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+}
+
+.brand-logo {
+  width: 66rpx;
+  height: 66rpx;
+  flex: 0 0 66rpx;
+  border-radius: 50%;
+}
+
+.brand-title { font-size: 34rpx; font-weight: 700; letter-spacing: -1rpx; white-space: nowrap; }
+.page-title { margin: 54rpx 0 8rpx; font-size: 58rpx; line-height: 1.18; font-weight: 800; letter-spacing: -2rpx; }
+.page-subtitle { margin: 0 0 44rpx; color: var(--color-muted); font-size: 29rpx; }
+.section-title { margin: 42rpx 4rpx 22rpx; font-size: 36rpx; font-weight: 750; }
+.muted { color: var(--color-muted); }
+
+.icon-button {
+  width: 84rpx;
+  height: 84rpx;
+  min-width: 84rpx;
+  padding: 0;
+  border-radius: 30rpx;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+}
+
+.message-icon { width: 44rpx; height: 44rpx; }
+
+.surface {
+  box-sizing: border-box;
+  background: var(--color-surface);
+  border-radius: 44rpx;
+}
+
+.primary-button,
+.secondary-button {
+  height: 104rpx;
+  border-radius: 52rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 31rpx;
+  font-weight: 700;
+}
+
+.primary-button { background: var(--color-ink); color: #fff; }
+.secondary-button { background: #fff; color: var(--color-ink); border: 2rpx solid var(--color-ink); }
+.primary-button[disabled] { background: #c8c9c7; color: #fff; }
+
+.form-label { display: block; margin: 30rpx 4rpx 14rpx; font-size: 27rpx; font-weight: 650; }
+.form-input,
+.form-textarea,
+.form-picker {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 28rpx;
+  background: #fff;
+  border: 2rpx solid var(--color-line);
+  font-size: 30rpx;
+}
+.form-input, .form-picker { min-height: 96rpx; padding: 0 30rpx; display: flex; align-items: center; }
+.form-textarea { min-height: 240rpx; padding: 28rpx 30rpx; }
+.helper { margin-top: 12rpx; color: var(--color-muted); font-size: 24rpx; line-height: 1.55; }
+.safe-bottom { height: env(safe-area-inset-bottom); }

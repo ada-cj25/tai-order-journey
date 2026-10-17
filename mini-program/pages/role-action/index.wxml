@@ -1,0 +1,41 @@
+<view class="page-shell action-shell">
+  <view class="topbar"><button class="icon-button" bindtap="back">返回</button><view class="brand-title">{{title}}</view><view class="top-spacer"></view></view>
+  <view class="page-title">{{title}}</view><view class="page-subtitle">{{subtitle}}</view>
+  <view wx:if="{{order}}" class="surface order-identity"><strong>{{order.customerName}}</strong><text>{{order.salesNumber || order.trackingSerial}}</text><view>{{order.stageLabel}} · {{order.currentOwnerLabel}}</view></view>
+
+  <block wx:if="{{payment}}">
+    <view class="section-title">销售报备事实</view>
+    <view class="surface payment-facts">
+      <view class="payment-row" wx:for="{{payment.facts}}" wx:key="key"><view><strong>{{item.label}}</strong><text>{{item.account || '未报备账户'}} · {{item.receivedAt || '未填写日期'}}</text></view><view class="amount">{{item.reported ? '¥' + item.amount : '未报备'}}</view></view>
+    </view>
+    <view wx:if="{{payment.receiptRestricted}}" class="restriction">董事长可查看金额与状态，但按凭证保密规则不能下载销售付款凭证。</view>
+    <view wx:if="{{mockSampleWithoutReceipt}}" class="restriction">这是预置演示样例，没有真实付款凭证，不能作为到账核验。请使用销售新建的本机订单测试完整流转。</view>
+    <view wx:if="{{receipts.length}}" class="surface receipt-list">
+      <view class="receipt-row" wx:for="{{receipts}}" wx:key="id" data-id="{{item.id}}" data-mime="{{item.mimeType}}" bindtap="previewReceipt"><view><strong>{{item.originalName}}</strong><text>{{item.sizeLabel}}</text></view><strong>查看凭证</strong></view>
+    </view>
+    <view class="surface check-card">
+      <view wx:if="{{initialAction}}" class="check-row" data-field="depositVerified" bindtap="toggleField"><checkbox checked="{{form.depositVerified}}" />我已核对定金实际到账</view>
+      <view wx:if="{{initialAction}}" class="check-row" data-field="prepaymentVerified" bindtap="toggleField"><checkbox checked="{{form.prepaymentVerified}}" />我已核对预付款实际到账</view>
+      <view wx:else class="check-row" data-field="verified" bindtap="toggleField"><checkbox checked="{{form.verified}}" />我已核对该笔款项实际到账</view>
+      <label class="form-label">核验备注（选填）</label><textarea class="form-textarea compact-textarea" data-field="comment" value="{{form.comment}}" bindinput="changeField" placeholder="记录银行流水核对情况" />
+    </view>
+  </block>
+
+  <view wx:if="{{acceptDesign}}" class="surface form-card">
+    <label class="form-label">设计承诺时限</label><view class="number-field"><input type="number" data-field="designLeadDays" value="{{form.designLeadDays}}" bindinput="changeField" placeholder="1—7" /><text>工作日</text></view>
+    <view class="check-row scope-check" data-field="scopeConfirmed" bindtap="toggleField"><checkbox checked="{{form.scopeConfirmed}}" />已阅读合同、现场类型、客户交期与需求，并确认接单</view>
+  </view>
+  <view wx:if="{{returnDesign}}" class="surface form-card"><label class="form-label">退回销售原因</label><textarea class="form-textarea" data-field="reason" value="{{form.reason}}" bindinput="changeField" placeholder="说明暂时无法接单或资料不完整的具体原因" /></view>
+  <view wx:if="{{transferDesign}}" class="surface form-card">
+    <label class="form-label">转给其他设计师</label><picker range="{{references.designers}}" range-key="name" value="{{selectedDesignerIndex}}" bindchange="selectDesigner"><view class="form-picker">{{selectedDesignerIndex >= 0 ? references.designers[selectedDesignerIndex].name : '请选择启用中的设计师'}}</view></picker>
+    <label class="form-label">转交原因</label><textarea class="form-textarea" data-field="reason" value="{{form.reason}}" bindinput="changeField" placeholder="说明转交原因；原截止时间保持不变" />
+  </view>
+  <view wx:if="{{acceptance}}" class="surface form-card">
+    <label class="form-label">客户验收签字日期</label><picker mode="date" value="{{form.acceptedAt}}" data-field="acceptedAt" bindchange="changeField"><view class="form-picker">{{form.acceptedAt || '请选择日期'}}</view></picker>
+    <label class="form-label">客户验收结论</label><textarea class="form-textarea compact-textarea" data-field="customerConclusion" value="{{form.customerConclusion}}" bindinput="changeField" placeholder="填写客户现场确认结论" />
+    <label class="form-label">客户签字材料</label><button class="upload-button" bindtap="chooseAcceptancePhoto">{{form.attachmentPaths.length ? '已选择签字照片，点击重选' : '拍照或从相册选择'}}</button>
+  </view>
+
+  <view wx:if="{{employee.role === 'CHAIRMAN'}}" class="override-warning"><strong>关键覆盖审计</strong><text>董事长在移动端执行关键覆盖时必须填写原因，系统会记录账号、订单版本与提交时间。</text><textarea class="form-textarea compact-textarea" data-field="overrideReason" value="{{form.overrideReason}}" bindinput="changeField" maxlength="500" placeholder="填写至少5个字的覆盖原因" /></view>
+  <button class="primary-button submit-button" loading="{{submitting}}" disabled="{{loading || submitting}}" bindtap="submit">二次确认并提交</button>
+</view>

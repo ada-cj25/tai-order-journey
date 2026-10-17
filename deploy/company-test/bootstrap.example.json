@@ -1,0 +1,10 @@
+{
+  "environment": "company-test",
+  "yearMonth": "YYMM",
+  "administrator": {
+    "employeeNo": "TEST-ADMIN-001",
+    "username": "testadmin",
+    "name": "测试环境管理员",
+    "department": "管理层"
+  }
+}

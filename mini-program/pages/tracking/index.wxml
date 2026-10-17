@@ -1,0 +1,81 @@
+<view class="page-shell tracking-shell">
+  <view class="topbar">
+    <view class="brand-lockup"><image class="brand-logo" src="/assets/brand-logo.png" mode="aspectFill" aria-label="苔的跟单旅程 Logo" /><view class="brand-title">苔的跟单旅程</view></view>
+    <button class="icon-button" aria-label="消息" bindtap="openNotifications"><image class="message-icon" src="/assets/icons/message.svg" mode="aspectFit" aria-hidden="true" /></button>
+  </view>
+
+  <view class="title-row">
+    <view><view class="page-title">生产追踪</view><view class="page-subtitle">我负责的每个区域、每道工序</view></view>
+    <view class="sync-state {{offline ? 'offline' : ''}}"><view class="sync-dot"></view>{{syncText}}</view>
+  </view>
+
+  <view class="summary-grid">
+    <view class="summary-item"><strong>{{summary.allUnfinished}}</strong><text>全部未完成</text></view>
+    <view class="summary-item active"><strong>{{summary.actionable}}</strong><text>可报工</text></view>
+    <view class="summary-item"><strong>{{summary.waiting}}</strong><text>等待中</text></view>
+    <view class="summary-item warning"><strong>{{summary.issue}}</strong><text>异常</text></view>
+  </view>
+
+  <view class="search-field">
+    <icon type="search" size="18" color="#8b8d91" />
+    <input value="{{query}}" bindinput="changeQuery" placeholder="搜索客户、销售编号或生产编号" confirm-type="search" />
+  </view>
+
+  <view wx:if="{{isAssembly && packageGroups.length}}" class="package-queue">
+    <view class="package-queue-title">组装包件待办 <text>{{packageGroups.length}} 单 · {{packageActionCount}} 项</text></view>
+    <view class="surface package-order-card" wx:for="{{packageGroups}}" wx:key="orderId" wx:for-item="packageGroup">
+      <view class="package-order-head" data-order-id="{{packageGroup.orderId}}" bindtap="togglePackageGroup" role="button" aria-expanded="{{expandedPackageOrderId === packageGroup.orderId}}">
+        <view class="package-order-identity"><strong>{{packageGroup.customerName}}</strong><text>{{packageGroup.salesNumber || packageGroup.trackingSerial}}</text></view>
+        <view class="package-order-expand">{{expandedPackageOrderId === packageGroup.orderId ? '收起' : '展开处理'}} {{packageGroup.actionCount}} 项 <text>{{expandedPackageOrderId === packageGroup.orderId ? '⌃' : '⌄'}}</text></view>
+      </view>
+      <view class="package-order-summary" data-order-id="{{packageGroup.orderId}}" bindtap="togglePackageGroup">
+        <text wx:if="{{packageGroup.hardwareCount}}">五金 {{packageGroup.hardwareCount}} 区待领 · {{packageGroup.hardwareTotal}} 包</text>
+        <text wx:if="{{packageGroup.manufacturedCount}}">自产包数 {{packageGroup.manufacturedCount}} 项待统计</text>
+        <text wx:if="{{packageGroup.outsourcedCount}}">外购包数 {{packageGroup.outsourcedCount}} 项待统计</text>
+      </view>
+      <view wx:if="{{expandedPackageOrderId === packageGroup.orderId}}" class="package-order-details">
+        <view class="package-source-section" wx:for="{{packageGroup.sections}}" wx:key="key" wx:for-item="section">
+          <view class="package-source-section-title">{{section.label}} <text>{{section.actions.length}} 项</text></view>
+          <view class="package-source-row" wx:for="{{section.actions}}" wx:key="sourceKey" wx:for-item="action" data-order-id="{{action.orderId}}" data-area-id="{{action.productionAreaId}}" data-source-key="{{action.sourceKey}}" bindtap="openPackageAction" role="button" aria-label="{{action.label}}，当前 {{action.total}} 包，{{action.actionLabel}}">
+            <view class="package-source-info"><strong>{{action.label}}</strong><text>当前 {{action.total}} 包</text></view>
+            <view class="package-queue-link">{{action.actionLabel}} <text>›</text></view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <scroll-view class="filter-scroll" scroll-x="true" enhanced="true" show-scrollbar="false">
+    <view class="filter-row">
+      <view class="filter-chip {{activeFilter === item.key ? 'selected' : ''}}" wx:for="{{filters}}" wx:key="key" data-key="{{item.key}}" bindtap="selectFilter">{{item.label}}</view>
+    </view>
+  </scroll-view>
+
+  <view wx:if="{{loading}}" class="surface empty-card">正在同步车间任务…</view>
+  <view wx:elif="{{!groups.length && !packageGroups.length}}" class="surface empty-card">当前筛选下没有相关工序</view>
+
+  <view class="order-group" wx:for="{{groups}}" wx:key="key" wx:for-item="group">
+    <view class="group-head" data-order-id="{{group.orderId}}" bindtap="openGroup">
+      <view><strong>{{group.customerName}}</strong><text>{{group.salesNumber}}</text></view>
+      <view class="group-count">{{group.tasks.length}} 个区域工序</view>
+    </view>
+    <view class="surface task-list">
+      <view class="track-task" wx:for="{{group.tasks}}" wx:key="id" wx:for-item="task" data-order-id="{{task.orderId}}" data-area-id="{{task.productionAreaId}}" bindtap="openOrder">
+        <view class="task-topline">
+          <view class="area-identity"><strong>{{task.productionAreaName}}</strong><text>{{task.productionNumber}}</text></view>
+          <view class="status-pill {{task.state}}">{{task.statusLabel}}</view>
+        </view>
+        <view class="task-detail-row">
+          <view><text>{{task.routeLabel}}</text><strong>{{task.title}}</strong></view>
+          <view class="task-quantity"><strong>{{task.completedQty}}</strong><text>/{{task.plannedQty}}{{task.unit}}</text></view>
+        </view>
+        <view class="task-foot">
+          <view class="due {{task.urgency}}">{{task.dueLabel}}<text wx:if="{{task.urgency !== 'NORMAL'}}"> · {{task.urgencyLabel}}</text></view>
+          <button wx:if="{{task.canReport}}" class="mini-report" data-task-id="{{task.id}}" catchtap="openTask">报工</button>
+          <view wx:else class="waiting-copy">{{task.waitingReason}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+<bottom-nav active="tracking" />

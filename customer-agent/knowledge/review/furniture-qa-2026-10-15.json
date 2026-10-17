@@ -1,0 +1,439 @@
+{
+  "schema_version": "1.0",
+  "title": "全屋定制流程与售后：公开资料调研草稿",
+  "collected_at": "2026-10-15",
+  "status": "pending_company_review",
+  "active_for_answers": false,
+  "notes": [
+    "供公司部门调研与审核，不是已经生效的公司QA。",
+    "content为简短转述或拟议服务流程；source_informed_draft也包含编辑建议，应由部门复核。",
+    "未收录他牌固定保修年限、付款比例、收费金额及响应时限。",
+    "每个title+content小于500字；正式发布需补充适用品牌、产品、责任人、审批记录与生效期。"
+  ],
+  "sources": [
+    {
+      "id": "samr-consumer",
+      "title": "定制家具消费提示",
+      "publisher": "市场监管总局网站（消费指南）",
+      "url": "https://www.samr.gov.cn/xw/mtjj/art/2024/art_28414fb267dd468ab7f7377ee016c7ba.html",
+      "scope": "一般选购与验收建议，不是本公司服务承诺",
+      "retrieved_at": "2026-10-15"
+    },
+    {
+      "id": "samr-shanxi",
+      "title": "山西家具定制合同示范文本推行说明",
+      "publisher": "市场监管总局网站 / 中国质量报",
+      "url": "https://www.samr.gov.cn/xw/df/art/2023/art_0edfa5cf2a2e465fb067ee22d35d3e3b.html",
+      "scope": "2023年山西地方示范文本介绍，仅作流程调研参考",
+      "retrieved_at": "2026-10-15"
+    },
+    {
+      "id": "beijing-contract",
+      "title": "京津冀地区家具买卖合同",
+      "publisher": "北京市市场监督管理局",
+      "url": "https://scjgj.beijing.gov.cn/bsfw/bmfw/sfwbbm/jjjht/201911/t20191129_722273.html",
+      "scope": "2019年发布的地区合同示范文本；未将其中期限、赔付或法律引用作为现行通用规则",
+      "retrieved_at": "2026-10-15"
+    },
+    {
+      "id": "zhenjiang-case",
+      "title": "“此物非彼物”，定制家具惹纠纷",
+      "publisher": "江苏省镇江市中级人民法院",
+      "url": "https://www.zjzy.gov.cn/xwzx/szfspf/2018/0326/17368.html",
+      "scope": "2018年个案中的留证提示，不套用个案判决结果",
+      "retrieved_at": "2026-10-15"
+    },
+    {
+      "id": "oppein-faq",
+      "title": "FAQ for OPPEIN Cabinets Products and Services",
+      "publisher": "OPPEIN 官方国际站",
+      "url": "https://www.oppeinhome.com/FAQ",
+      "scope": "国际站品牌流程参考；付款比例、工期、响应时限均不转为本公司规则",
+      "retrieved_at": "2026-10-15"
+    },
+    {
+      "id": "samr-xiamen",
+      "title": "厦门发布家居建材合同推荐文本",
+      "publisher": "市场监管总局网站 / 中国消费者报",
+      "url": "https://www.samr.gov.cn/xw/df/art/2024/art_0380bcdeade24a139cb066615e941028.html",
+      "scope": "2024年厦门地区行业问题调研材料，不直接确定个案权利义务",
+      "retrieved_at": "2026-10-15"
+    }
+  ],
+  "chunks": [
+    {
+      "id": "public-furniture-001",
+      "category": "定制流程",
+      "title": "全屋定制一般经过哪些环节？",
+      "content": "公开品牌流程包含需求与图纸沟通、报价、测量、方案确认、生产、运输及安装。各公司的先后安排和付款节点可能不同。",
+      "status": "pending_company_review",
+      "active_for_answers": false,
+      "audience": "reviewer",
+      "evidence_type": "source_informed_draft",
+      "source_ids": [
+        "oppein-faq"
+      ],
+      "owner_department": "销售 / 设计",
+      "company_questions": [
+        "公司标准流程图、各节点负责人和客户需提交的资料是什么？"
+      ],
+      "handoff_when": "订单事实、责任、费用、时限或适用政策无法核实，或客户明确要求人工处理。",
+      "version": "research-2026-10-15",
+      "effective_from": null,
+      "effective_to": null
+    },
+    {
+      "id": "public-furniture-002",
+      "category": "定制流程",
+      "title": "量尺前需要准备哪些信息？",
+      "content": "建议先说明空间用途、收纳需求、预算与装修进度，准备户型和现场资料；具体量尺条件由设计人员确认。",
+      "status": "pending_company_review",
+      "active_for_answers": false,
+      "audience": "reviewer",
+      "evidence_type": "source_informed_draft",
+      "source_ids": [
+        "samr-consumer"
+      ],
+      "owner_department": "设计",
+      "company_questions": [
+        "初尺、复尺分别在装修哪个阶段？现场不满足条件如何改约？"
+      ],
+      "handoff_when": "订单事实、责任、费用、时限或适用政策无法核实，或客户明确要求人工处理。",
+      "version": "research-2026-10-15",
+      "effective_from": null,
+      "effective_to": null
+    },
+    {
+      "id": "public-furniture-003",
+      "category": "方案确认",
+      "title": "确认图纸时重点核对什么？",
+      "content": "重点核对尺寸、布局、材料、颜色及功能，并关注水电、插座、门窗和现场障碍是否影响使用。",
+      "status": "pending_company_review",
+      "active_for_answers": false,
+      "audience": "reviewer",
+      "evidence_type": "source_informed_draft",
+      "source_ids": [
+        "samr-consumer"
+      ],
+      "owner_department": "设计 / 技术",
+      "company_questions": [
+        "最终图纸由谁确认？样块、色号和签字版本怎样保存？"
+      ],
+      "handoff_when": "订单事实、责任、费用、时限或适用政策无法核实，或客户明确要求人工处理。",
+      "version": "research-2026-10-15",
+      "effective_from": null,
+      "effective_to": null
+    },
+    {
+      "id": "public-furniture-004",
+      "category": "报价合同",
+      "title": "怎样确认报价是否包含全部项目？",
+      "content": "合同和清单应明确材料、五金、规格及计价范围；运输、安装等费用宜逐项确认。",
+      "status": "pending_company_review",
+      "active_for_answers": false,
+      "audience": "reviewer",
+      "evidence_type": "source_informed_draft",
+      "source_ids": [
+        "samr-shanxi"
+      ],
+      "owner_department": "销售 / 财务",
+      "company_questions": [
+        "计价方式、增项条件和客户确认流程是什么？"
+      ],
+      "handoff_when": "订单事实、责任、费用、时限或适用政策无法核实，或客户明确要求人工处理。",
+      "version": "research-2026-10-15",
+      "effective_from": null,
+      "effective_to": null
+    },
+    {
+      "id": "public-furniture-005",
+      "category": "设计变更",
+      "title": "确认方案后还能修改尺寸或颜色吗？",
+      "content": "变更应以文字记录并经双方确认，避免仅依赖口头沟通。是否能改、费用和交期影响需结合实际进度核实。",
+      "status": "pending_company_review",
+      "active_for_answers": false,
+      "audience": "reviewer",
+      "evidence_type": "source_informed_draft",
+      "source_ids": [
+        "zhenjiang-case"
+      ],
+      "owner_department": "设计 / 技术 / 订单管理",
+      "company_questions": [
+        "各阶段哪些变更允许受理？谁审批？如何形成新版本？"
+      ],
+      "handoff_when": "订单事实、责任、费用、时限或适用政策无法核实，或客户明确要求人工处理。",
+      "version": "research-2026-10-15",
+      "effective_from": null,
+      "effective_to": null
+    },
+    {
+      "id": "public-furniture-006",
+      "category": "订单交付",
+      "title": "已经生产了，能保证哪天送到吗？",
+      "content": "不同产品和材料的生产安排可能不同，订单进度应向负责该项目的人员核实。公开品牌工期不能替代具体订单安排。",
+      "status": "pending_company_review",
+      "active_for_answers": false,
+      "audience": "reviewer",
+      "evidence_type": "source_informed_draft",
+      "source_ids": [
+        "oppein-faq"
+      ],
+      "owner_department": "订单管理",
+      "company_questions": [
+        "客户约定交期、计划发货与已发货如何区分？延迟由谁说明？"
+      ],
+      "handoff_when": "订单事实、责任、费用、时限或适用政策无法核实，或客户明确要求人工处理。",
+      "version": "research-2026-10-15",
+      "effective_from": null,
+      "effective_to": null
+    },
+    {
+      "id": "public-furniture-007",
+      "category": "运输安装",
+      "title": "送货上楼和安装费用怎么确认？",
+      "content": "送货到门还是上楼、相关费用及安装安排容易产生分歧，宜在合同中明确。",
+      "status": "pending_company_review",
+      "active_for_answers": false,
+      "audience": "reviewer",
+      "evidence_type": "source_informed_draft",
+      "source_ids": [
+        "samr-xiamen"
+      ],
+      "owner_department": "销售 / 安装",
+      "company_questions": [
+        "上楼、搬运、二次上门等收费项目和确认方式是什么？"
+      ],
+      "handoff_when": "订单事实、责任、费用、时限或适用政策无法核实，或客户明确要求人工处理。",
+      "version": "research-2026-10-15",
+      "effective_from": null,
+      "effective_to": null
+    },
+    {
+      "id": "public-furniture-008",
+      "category": "到货验收",
+      "title": "到货时发现少件或破损怎么办？",
+      "content": "验收时核对品牌、数量、规格、颜色、包装和外观；发现问题应提出并书面记录处理方案。",
+      "status": "pending_company_review",
+      "active_for_answers": false,
+      "audience": "reviewer",
+      "evidence_type": "source_informed_draft",
+      "source_ids": [
+        "beijing-contract"
+      ],
+      "owner_department": "订单管理 / 安装",
+      "company_questions": [
+        "缺件、破损记录需要哪些照片？谁核对清单并安排处理？"
+      ],
+      "handoff_when": "订单事实、责任、费用、时限或适用政策无法核实，或客户明确要求人工处理。",
+      "version": "research-2026-10-15",
+      "effective_from": null,
+      "effective_to": null
+    },
+    {
+      "id": "public-furniture-009",
+      "category": "安装验收",
+      "title": "安装完成后应该检查什么？",
+      "content": "可检查结构稳定、表面与封边、柜门抽屉开合以及拼接间隙等，并核对约定的功能。",
+      "status": "pending_company_review",
+      "active_for_answers": false,
+      "audience": "reviewer",
+      "evidence_type": "source_informed_draft",
+      "source_ids": [
+        "samr-consumer"
+      ],
+      "owner_department": "安装 / 售后",
+      "company_questions": [
+        "公司的验收清单、签字要求和遗留问题登记方式是什么？"
+      ],
+      "handoff_when": "订单事实、责任、费用、时限或适用政策无法核实，或客户明确要求人工处理。",
+      "version": "research-2026-10-15",
+      "effective_from": null,
+      "effective_to": null
+    },
+    {
+      "id": "public-furniture-010",
+      "category": "凭证资料",
+      "title": "哪些资料需要保存以便后续售后？",
+      "content": "建议保存合同、收据或发票、产品说明及合格资料；交接时确认相关文件是否齐全。",
+      "status": "pending_company_review",
+      "active_for_answers": false,
+      "audience": "reviewer",
+      "evidence_type": "source_informed_draft",
+      "source_ids": [
+        "beijing-contract"
+      ],
+      "owner_department": "销售 / 售后",
+      "company_questions": [
+        "客户从哪里获取电子资料？遗失凭证后怎样核实订单？"
+      ],
+      "handoff_when": "订单事实、责任、费用、时限或适用政策无法核实，或客户明确要求人工处理。",
+      "version": "research-2026-10-15",
+      "effective_from": null,
+      "effective_to": null
+    },
+    {
+      "id": "public-furniture-011",
+      "category": "售后报修",
+      "title": "柜门或五金出现问题，报修要提供什么？",
+      "content": "品牌公开售后指引会要求合同编号、问题说明、照片及标记位置的图纸，以便定位问题。",
+      "status": "pending_company_review",
+      "active_for_answers": false,
+      "audience": "reviewer",
+      "evidence_type": "source_informed_draft",
+      "source_ids": [
+        "oppein-faq"
+      ],
+      "owner_department": "售后",
+      "company_questions": [
+        "本公司工单必填字段、图片要求、受理渠道及人员分派规则是什么？"
+      ],
+      "handoff_when": "订单事实、责任、费用、时限或适用政策无法核实，或客户明确要求人工处理。",
+      "version": "research-2026-10-15",
+      "effective_from": null,
+      "effective_to": null
+    },
+    {
+      "id": "public-furniture-012",
+      "category": "配件更换",
+      "title": "铰链或导轨坏了，能直接换一个吗？",
+      "content": "品牌公开问答建议通过其销售团队咨询备件或更换。实际适配与处理方案需要核对具体产品。",
+      "status": "pending_company_review",
+      "active_for_answers": false,
+      "audience": "reviewer",
+      "evidence_type": "source_informed_draft",
+      "source_ids": [
+        "oppein-faq"
+      ],
+      "owner_department": "售后 / 技术",
+      "company_questions": [
+        "配件型号怎样确认？停产替代件由谁确认？收费如何告知？"
+      ],
+      "handoff_when": "订单事实、责任、费用、时限或适用政策无法核实，或客户明确要求人工处理。",
+      "version": "research-2026-10-15",
+      "effective_from": null,
+      "effective_to": null
+    },
+    {
+      "id": "public-furniture-013",
+      "category": "保修范围",
+      "title": "还在保修期内是否所有维修都免费？",
+      "content": "合同应明确售后服务内容及期限。仅知道年限，不能确定某一故障的处理范围或费用。",
+      "status": "pending_company_review",
+      "active_for_answers": false,
+      "audience": "reviewer",
+      "evidence_type": "source_informed_draft",
+      "source_ids": [
+        "samr-shanxi"
+      ],
+      "owner_department": "售后 / 负责人",
+      "company_questions": [
+        "请按品牌确认起算凭证、覆盖部件、例外情况和收费审核规则。"
+      ],
+      "handoff_when": "订单事实、责任、费用、时限或适用政策无法核实，或客户明确要求人工处理。",
+      "version": "research-2026-10-15",
+      "effective_from": null,
+      "effective_to": null
+    },
+    {
+      "id": "public-furniture-014",
+      "category": "异味检测",
+      "title": "柜子有味道，能直接判断材料不合格吗？",
+      "content": "气味检测方式及检测费用承担属于行业常见争议点，需要在资料和约定中核实，不能只凭描述作质量结论。",
+      "status": "pending_company_review",
+      "active_for_answers": false,
+      "audience": "reviewer",
+      "evidence_type": "source_informed_draft",
+      "source_ids": [
+        "samr-xiamen"
+      ],
+      "owner_department": "质量 / 售后",
+      "company_questions": [
+        "检测受理流程、报告要求、负责人员与费用确认方式是什么？"
+      ],
+      "handoff_when": "订单事实、责任、费用、时限或适用政策无法核实，或客户明确要求人工处理。",
+      "version": "research-2026-10-15",
+      "effective_from": null,
+      "effective_to": null
+    },
+    {
+      "id": "public-furniture-015",
+      "category": "延期争议",
+      "title": "交付延期或者想退改订单怎么办？",
+      "content": "公开行业资料提醒，履行期限、售后及责任约定不清容易引发纠纷。具体退改方案应核对合同和实际情况后处理。",
+      "status": "pending_company_review",
+      "active_for_answers": false,
+      "audience": "reviewer",
+      "evidence_type": "source_informed_draft",
+      "source_ids": [
+        "samr-xiamen"
+      ],
+      "owner_department": "销售 / 订单管理 / 负责人",
+      "company_questions": [
+        "退改单审批人、材料要求和进度反馈方式是什么？"
+      ],
+      "handoff_when": "订单事实、责任、费用、时限或适用政策无法核实，或客户明确要求人工处理。",
+      "version": "research-2026-10-15",
+      "effective_from": null,
+      "effective_to": null
+    },
+    {
+      "id": "public-furniture-016",
+      "category": "材料保养",
+      "title": "能不能用酒精、强清洁剂擦柜门？",
+      "content": "建议先收集材料、表面处理和清洁剂信息，再查询对应产品说明；资料缺失时交由专业人员确认。",
+      "status": "pending_company_review",
+      "active_for_answers": false,
+      "audience": "reviewer",
+      "evidence_type": "source_informed_draft",
+      "source_ids": [
+        "beijing-contract"
+      ],
+      "owner_department": "技术 / 售后",
+      "company_questions": [
+        "按材料整理允许和禁止的清洁方法；哪些做法可能损伤表面？"
+      ],
+      "handoff_when": "订单事实、责任、费用、时限或适用政策无法核实，或客户明确要求人工处理。",
+      "version": "research-2026-10-15",
+      "effective_from": null,
+      "effective_to": null
+    },
+    {
+      "id": "public-furniture-017",
+      "category": "售后分诊",
+      "title": "柜门歪斜、抽屉卡顿时如何受理？",
+      "content": "建议记录问题位置、出现时间、开合现象及照片或视频，安排人员核对安装与配件情况；客服先登记现象，不直接认定责任。",
+      "status": "pending_company_review",
+      "active_for_answers": false,
+      "audience": "reviewer",
+      "evidence_type": "proposed_workflow",
+      "source_ids": [],
+      "owner_department": "售后 / 安装",
+      "company_questions": [
+        "哪些问题可指导排查？哪些必须上门？如何确认处理完成？"
+      ],
+      "handoff_when": "订单事实、责任、费用、时限或适用政策无法核实，或客户明确要求人工处理。",
+      "version": "research-2026-10-15",
+      "effective_from": null,
+      "effective_to": null
+    },
+    {
+      "id": "public-furniture-018",
+      "category": "售后闭环",
+      "title": "补件或返修完成后还需要做什么？",
+      "content": "建议记录已处理项目、遗留问题和客户确认结果；若仍有异常，继续关联原工单跟进。",
+      "status": "pending_company_review",
+      "active_for_answers": false,
+      "audience": "reviewer",
+      "evidence_type": "proposed_workflow",
+      "source_ids": [],
+      "owner_department": "售后 / 订单管理",
+      "company_questions": [
+        "补单关联、维修验收、回访及关闭工单分别由谁负责？"
+      ],
+      "handoff_when": "订单事实、责任、费用、时限或适用政策无法核实，或客户明确要求人工处理。",
+      "version": "research-2026-10-15",
+      "effective_from": null,
+      "effective_to": null
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+<view class="page-shell after-shell">
+  <view class="topbar"><view class="brand-lockup"><image class="brand-logo" src="/assets/brand-logo.png" mode="aspectFill" /><view class="brand-title">售后工作区</view></view><button class="icon-button" bindtap="openNotifications"><image class="message-icon" src="/assets/icons/message.svg" mode="aspectFit" /></button></view>
+  <view class="page-title">售后处理</view>
+  <view class="page-subtitle">共享已验收订单，登记问题、处理结果与费用记录</view>
+  <view wx:if="{{mockMode}}" class="cost-banner"><strong>本机模拟测试</strong><text>登记和费用仅保存于本机小程序，不写入网页版或正式成本。</text></view>
+  <view wx:elif="{{!costModuleEnabled}}" class="cost-banner"><strong>成本模块未开放</strong><text>可查看和处理已有问题；正式登记问题及费用需等待成本模块开放。</text></view>
+  <view class="tool-row"><view class="search-field"><icon type="search" size="18" color="#8b8d91" /><input value="{{query}}" bindinput="changeQuery" placeholder="客户、销售编号或售后单号" /></view><picker range="{{statusFilters}}" value="{{filterIndex}}" bindchange="changeFilter"><view class="filter-button">{{statusFilters[filterIndex]}}</view></picker></view>
+  <view class="queue-summary">售后问题 {{cases.length}} 项 · 已验收订单 {{completedOrders.length}} 单</view>
+  <view class="surface case-card {{item.status}}" wx:for="{{cases}}" wx:key="id" data-id="{{item.id}}" bindtap="openCase">
+    <view class="case-head"><view><strong>{{item.customerName}}</strong><text>{{item.salesNumber}} · {{item.caseNumber}}</text></view><view class="case-status">{{item.statusLabel}}</view></view>
+    <view class="case-title">{{item.issueType}}</view><view class="case-description">{{item.description}}</view>
+    <view class="case-foot"><text>{{item.warrantyLabel}}</text><strong>{{selectedCase.id === item.id ? '收起详情' : '查看详情'}}</strong></view>
+    <view wx:if="{{selectedCase.id === item.id}}" class="case-detail" catchtap="noop">
+      <view wx:if="{{item.resolution}}" class="resolution-result"><strong>处理结果</strong><text>{{item.resolution}}</text></view>
+      <view class="case-actions">
+        <button class="secondary-button" catchtap="openOrder">查看订单</button>
+        <button wx:if="{{item.status === 'OPEN'}}" class="primary-button" catchtap="startCase" loading="{{submitting}}">开始处理</button>
+        <button wx:elif="{{item.status === 'IN_PROGRESS'}}" class="primary-button" catchtap="openResolution">填写处理结果</button>
+      </view>
+      <view wx:if="{{item.costSubtotal !== null && item.costSubtotal !== undefined}}" class="cost-total"><text>有效售后费用累计</text><strong>¥{{item.costSubtotal}}</strong></view>
+      <view wx:if="{{item.costBatches && item.costBatches.length}}" class="batch-list">
+        <view class="batch-title">费用记录</view>
+        <view class="batch-row" wx:for="{{item.costBatches}}" wx:for-item="batch" wx:key="id">
+          <view class="batch-main"><strong>¥{{batch.amount}}</strong><text>{{batch.incurredOn}} · {{batch.voidedAt ? '已作废' : '有效'}}</text></view>
+          <view class="batch-description">{{batch.description}}</view>
+          <view wx:if="{{batch.attachments && batch.attachments.length}}" class="evidence-list"><button class="evidence-link" wx:for="{{batch.attachments}}" wx:for-item="attachment" wx:key="id" data-id="{{attachment.id}}" data-mime="{{attachment.mimeType}}" catchtap="previewEvidence">查看凭证 · {{attachment.originalName}}</button></view>
+          <view wx:if="{{batch.voidedAt}}" class="void-note">作废原因：{{batch.voidReason}}</view>
+          <button wx:elif="{{canRecordCosts}}" class="text-button" data-id="{{batch.id}}" catchtap="openVoid">作废此笔费用</button>
+        </view>
+      </view>
+      <button wx:if="{{canRecordCosts}}" class="secondary-button add-cost-button" catchtap="openCost">追加一笔售后费用</button>
+    </view>
+  </view>
+  <view wx:if="{{!cases.length}}" class="surface empty-state">当前筛选下没有售后问题</view>
+  <button wx:if="{{canRecordCosts && completedOrders.length}}" class="primary-button create-case" bindtap="createCase">登记新售后问题</button>
+  <view wx:if="{{!completedOrders.length}}" class="empty-hint">完成客户签字验收后，订单才可登记售后。</view>
+</view>
+<bottom-nav active="aftersales" />
+
+<view wx:if="{{resolvingCase}}" class="sheet-mask" bindtap="closeResolution"></view>
+<view wx:if="{{resolvingCase}}" class="resolution-sheet">
+  <view class="sheet-title">填写处理结果</view><view class="sheet-order">{{resolvingCase.caseNumber}} · {{resolvingCase.customerName}}</view>
+  <textarea value="{{resolution}}" data-field="resolution" bindinput="changeField" placeholder="记录已采取的措施、现场结果和客户反馈" />
+  <view class="sheet-actions"><button class="secondary-button" bindtap="closeResolution">取消</button><button class="primary-button" loading="{{submitting}}" bindtap="submitResolution">确认已解决</button></view>
+</view>
+
+<view wx:if="{{creating}}" class="sheet-mask" bindtap="closeCreate"></view>
+<scroll-view wx:if="{{creating}}" scroll-y="true" class="resolution-sheet create-sheet">
+  <view class="sheet-title">登记新售后问题</view><view class="sheet-order">填写问题和本次费用</view>
+  <label class="form-label required">已验收订单</label><picker range="{{orderLabels}}" value="{{createOrderIndex}}" bindchange="changeCreateOrder"><view class="form-picker">{{orderLabels[createOrderIndex] || '暂无可选订单'}}</view></picker>
+  <label class="form-label required">问题类型</label><input class="form-input" data-field="createIssueType" value="{{createIssueType}}" bindinput="changeField" placeholder="例：安装调整、五金更换" />
+  <label class="form-label required">问题说明</label><textarea class="form-textarea" data-field="createDescription" value="{{createDescription}}" bindinput="changeField" placeholder="说清楚哪里出了问题" />
+  <label class="form-label required">费用日期</label><picker mode="date" value="{{createDate}}" bindchange="changeCreateDate"><view class="form-picker">{{createDate || '选择日期'}}</view></picker>
+  <label class="form-label required">本次费用（元）</label><view class="money-field"><text>¥</text><input type="digit" data-field="createAmount" value="{{createAmount}}" bindinput="changeField" placeholder="输入金额" /></view>
+  <label class="form-label">照片或凭证（可不传）</label><view class="evidence-upload"><button class="evidence-upload-button" data-target="create" bindtap="chooseEvidence">添加照片或文件</button><text wx:if="{{createAttachments.length}}">已选 {{createAttachments.length}} 份</text></view>
+  <view class="sheet-actions"><button class="secondary-button" bindtap="closeCreate">取消</button><button class="primary-button" loading="{{submitting}}" bindtap="submitCreate">登记问题</button></view>
+</scroll-view>
+
+<view wx:if="{{addingCost}}" class="sheet-mask" bindtap="closeCost"></view>
+<scroll-view wx:if="{{addingCost}}" scroll-y="true" class="resolution-sheet create-sheet">
+  <view class="sheet-title">追加售后费用</view><view class="sheet-order">{{selectedCase.caseNumber}} · 原有费用保留，新增一笔记录。</view>
+  <label class="form-label required">费用日期</label><picker mode="date" value="{{costDate}}" bindchange="changeCostDate"><view class="form-picker">{{costDate}}</view></picker>
+  <label class="form-label required">本次费用（元）</label><view class="money-field"><text>¥</text><input type="digit" data-field="costAmount" value="{{costAmount}}" bindinput="changeField" placeholder="输入金额" /></view>
+  <label class="form-label required">费用说明</label><textarea class="form-textarea" data-field="costDescription" value="{{costDescription}}" bindinput="changeField" placeholder="说明本次维修、更换或上门费用" />
+  <label class="form-label">照片或凭证（可不传）</label><view class="evidence-upload"><button class="evidence-upload-button" data-target="cost" bindtap="chooseEvidence">添加照片或文件</button><text wx:if="{{costAttachments.length}}">已选 {{costAttachments.length}} 份</text></view>
+  <view class="sheet-actions"><button class="secondary-button" bindtap="closeCost">取消</button><button class="primary-button" loading="{{submitting}}" bindtap="submitCost">确认追加</button></view>
+</scroll-view>
+
+<view wx:if="{{voidingBatchId}}" class="sheet-mask" bindtap="closeVoid"></view>
+<view wx:if="{{voidingBatchId}}" class="resolution-sheet">
+  <view class="sheet-title">作废费用记录</view><view class="sheet-order">作废会保留原始记录与原因，累计金额会重新计算。</view>
+  <textarea value="{{voidReason}}" data-field="voidReason" bindinput="changeField" placeholder="请填写作废原因" />
+  <view class="sheet-actions"><button class="secondary-button" bindtap="closeVoid">取消</button><button class="primary-button" loading="{{submitting}}" bindtap="submitVoid">确认作废</button></view>
+</view>

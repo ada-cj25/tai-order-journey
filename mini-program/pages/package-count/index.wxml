@@ -1,0 +1,27 @@
+<view class="page-shell package-shell">
+  <view class="topbar"><button class="icon-button" bindtap="back">返回</button><view class="brand-title">组装包件台账</view><view class="top-spacer"></view></view>
+  <view class="page-title">五金领用与包件统计</view>
+  <view class="page-subtitle">{{order.customerName}} · {{order.salesNumber || order.trackingSerial}}</view>
+  <view wx:if="{{loading}}" class="surface loading-card">正在读取最新台账…</view>
+  <block wx:elif="{{summary}}">
+    <view class="surface package-overview">
+      <view class="overview-title"><strong>发货包件当前合计</strong><text>{{summary.status === 'COMPLETE' ? '统计完成' : '当前暂计'}}</text></view>
+      <view class="overview-total">{{summary.currentTotal}}<text>包件</text></view>
+      <view class="overview-split"><view>五金包 <strong>{{summary.hardwareTotal}}</strong></view><view>自产入库 <strong>{{summary.manufacturedTotal}}</strong></view><view>外购入库 <strong>{{summary.outsourcedTotal}}</strong></view></view>
+    </view>
+    <view class="package-note">五金由采购登记，组装确认领用；自产包件须在对应路线打包完成后登记。每次填写的是本次新增包数，系统会累计保留记录。</view>
+    <view wx:if="{{!sources.length}}" class="surface loading-card">当前区域暂无包件来源</view>
+    <view class="surface source-card" wx:for="{{sources}}" wx:key="sourceKey" wx:for-item="source">
+      <view class="source-head"><view><text class="source-kind">{{source.kindLabel}}</text><strong>{{source.label}}</strong></view><text class="source-status">{{source.statusText}}</text></view>
+      <view class="source-total">累计 <strong>{{source.total}}</strong> 包</view>
+      <view class="source-detail">{{source.detail}}</view>
+      <button wx:if="{{source.canConfirm}}" class="primary-button source-action" data-key="{{source.sourceKey}}" bindtap="confirmHardware" disabled="{{saving}}">确认领用 {{source.total}} 包</button>
+      <view wx:if="{{source.kind !== 'HARDWARE_AREA' && source.status === 'OPEN'}}" class="source-input-row">
+        <view class="source-quantity-field"><input type="number" value="{{quantityBySource[source.sourceKey]}}" placeholder="本次新增包数" data-key="{{source.sourceKey}}" bindinput="editQuantity" disabled="{{!source.canAdd || saving}}" /></view>
+        <button class="primary-button" data-key="{{source.sourceKey}}" bindtap="addCount" disabled="{{!source.canAdd || saving}}">追加包件</button>
+      </view>
+      <button wx:if="{{source.kind !== 'HARDWARE_AREA' && source.status === 'OPEN'}}" class="secondary-button source-action" data-key="{{source.sourceKey}}" bindtap="finishSource" disabled="{{!source.canFinish || saving}}">统计完成</button>
+      <view wx:if="{{source.visibleEntries.length}}" class="entry-list"><view class="entry-title">累计记录</view><view class="entry-row" wx:for="{{source.visibleEntries}}" wx:key="id" wx:for-item="entry"><text>{{entry.timeLabel}}</text><strong>+{{entry.quantity}} 包</strong></view></view>
+    </view>
+  </block>
+</view>

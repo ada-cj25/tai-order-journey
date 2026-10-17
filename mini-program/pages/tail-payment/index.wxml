@@ -1,0 +1,17 @@
+<view class="page-shell tail-shell">
+  <view class="topbar"><button class="icon-button" bindtap="back">返回</button><view class="brand-title">尾款报备</view><view class="top-spacer"></view></view>
+  <view class="page-title">报备尾款收款</view>
+  <view class="page-subtitle">销售记录收款事实，财务核验到账后才能发货</view>
+  <view wx:if="{{order}}" class="surface tail-order">
+    <strong>{{order.customerName}}</strong><text>{{order.salesNumber || order.trackingSerial}}</text>
+    <view wx:if="{{expectedAmount !== null}}" class="receivable">本单应收尾款 <strong>¥{{expectedAmount}}</strong></view>
+  </view>
+  <view class="surface tail-form">
+    <label class="form-label">本次到账金额</label><view class="money-field"><text>¥</text><input type="digit" value="{{amount}}" bindinput="changeAmount" placeholder="填写实际到账金额" /></view>
+    <label class="form-label">实际到账日期</label><picker mode="date" value="{{receivedAt}}" bindchange="changeDate"><view class="form-picker">{{receivedAt || '选择到账日期'}}</view></picker>
+    <label class="form-label">已批准的收款账户</label><picker range="{{accounts}}" value="{{accountIndex}}" bindchange="changeAccount"><view class="form-picker">{{accounts[accountIndex] || '请选择账户'}}</view></picker>
+    <label class="form-label">尾款收款凭证</label><button class="upload-button" bindtap="chooseReceipt">{{receiptName || '拍照或从相册选择凭证'}}</button>
+  </view>
+  <view class="tail-note">{{mockMode ? '当前为本机流程演示；不会写入网页版。' : ''}}报备后会交给财务核验。财务确认实际到账前，订单管理员不能登记发货。</view>
+  <button class="primary-button submit-button" loading="{{submitting}}" disabled="{{submitting || !order}}" bindtap="submit">提交尾款报备</button>
+</view>

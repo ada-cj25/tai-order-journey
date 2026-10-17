@@ -1,0 +1,12 @@
+.install-shell { padding-bottom: 80rpx; }
+.top-spacer { width: 84rpx; }
+.task-card { padding: 16rpx 30rpx; }
+.task-card view { min-height: 76rpx; display: grid; grid-template-columns: 170rpx 1fr; align-items: center; gap: 18rpx; border-bottom: 2rpx solid var(--color-line); }
+.task-card view:last-child { border-bottom: 0; }
+.task-card text { color: var(--color-muted); font-size: 22rpx; }
+.task-card strong { text-align: right; font-size: 23rpx; line-height: 1.45; }
+.placeholder { color: var(--color-muted); }
+.picker-value { justify-content: space-between; }
+.money-field { min-height: 96rpx; display: flex; align-items: center; gap: 12rpx; padding: 0 28rpx; border: 2rpx solid var(--color-line); border-radius: 28rpx; background: #fff; }
+.money-field input { flex: 1; font-size: 29rpx; }
+.button-row { margin-top: 36rpx; display: grid; grid-template-columns: 1fr 1fr; gap: 20rpx; }

@@ -1,0 +1,55 @@
+<view wx:if="{{screen === 'checking'}}" class="login-checking" aria-label="正在检查登录状态"></view>
+
+<view wx:elif="{{screen === 'prelude'}}" class="login-prelude" bindtap="enterLogin">
+  <view class="prelude-paper">
+    <view class="prelude-bar">
+      <view class="prelude-mark"><view class="prelude-logo">苔</view><text>ORDER JOURNEY</text></view>
+    </view>
+    <view class="prelude-content">
+      <view class="prelude-scene" aria-role="img" aria-label="{{sceneLabel}}">
+        <image wx:if="{{artAvailable}}" class="prelude-art" src="{{currentFrame}}" mode="aspectFit" aria-hidden="true" binderror="handleFrameError" />
+        <view wx:else class="prelude-art prelude-art-fallback">天气手帐</view>
+        <view class="prelude-weather">宁波镇海 · 雨天手帐</view>
+      </view>
+      <view class="prelude-title">
+        <text class="prelude-eyebrow">WELCOME TO</text>
+        <view>苔的跟单旅程</view>
+        <text>把今天的每一步，安稳地跟到落地。</text>
+      </view>
+    </view>
+    <button class="prelude-enter" hover-class="prelude-enter-active" catchtap="enterLogin">
+      <strong>点击进入</strong>
+      <text>开始今天的跟单旅程</text>
+    </button>
+  </view>
+</view>
+
+<view wx:elif="{{screen === 'login'}}" class="login-shell">
+  <view class="login-brand"><image src="/assets/brand-logo.png" mode="aspectFill" /><view><strong>苔的跟单旅程</strong><text>内部移动办公</text></view></view>
+  <view class="login-copy"><view class="eyebrow">全岗位员工工作区</view><view class="login-title">登录后，只看你负责的事</view><view class="login-subtitle">董事长、订单、财务、销售、设计、技术、采购、车间、安装和售后均按服务端岗位进入自己的工作台。</view></view>
+
+  <button wx:if="{{mockMode && canLocalApiTest}}" class="login-test-switch" bindtap="enableLocalApiTest">开发者工具：连接本机 API 测试库</button>
+  <view wx:if="{{mockMode}}" class="login-panel surface">
+    <view class="panel-head"><strong>选择本机演示身份</strong><text>不连接网页版账号</text></view>
+    <view class="account-row" wx:for="{{accounts}}" wx:key="id" data-id="{{item.id}}" bindtap="chooseAccount">
+      <view class="account-avatar">{{item.avatarText}}</view>
+      <view class="account-main"><strong>{{item.name}}</strong><text>{{item.username || item.employeeNo}} · {{item.roleLabel}} · {{item.scopeLabel}}</text></view>
+      <view class="account-enter">进入</view>
+    </view>
+  </view>
+
+  <view wx:else class="login-panel surface">
+    <view class="panel-head"><strong>{{localDevLogin ? '本机 API 联调' : '微信员工登录'}}</strong><text>首次需绑定</text></view>
+    <view wx:if="{{localDevLogin}}" class="login-helper">仅开发者工具模拟器：连接本机 ERP 测试库。每个岗位使用不同的英文测试身份；此处不验证真实微信登录。</view>
+    <view wx:if="{{localDevLogin}}">
+      <label class="form-label">本机测试身份</label>
+      <input class="form-input" value="{{devIdentity}}" bindinput="changeDevIdentity" maxlength="32" placeholder="例如 sales01" />
+    </view>
+    <label class="form-label">首次绑定邀请码</label>
+    <input class="form-input" value="{{inviteCode}}" bindinput="changeInvite" maxlength="64" placeholder="已绑定员工可留空" />
+    <button class="primary-button login-button" loading="{{loading}}" bindtap="wechatLogin">{{localDevLogin ? '连接本机 ERP' : '微信登录'}}</button>
+    <view class="login-helper">邀请码由订单管理员在网页端生成，24小时内使用且只能使用一次。</view>
+  </view>
+  <button wx:if="{{localDevLogin}}" class="login-test-switch" bindtap="backToMock">返回本机演示</button>
+  <view class="login-foot">小程序不允许手动选择岗位 · 权限以服务端为准</view>
+</view>

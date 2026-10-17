@@ -1,0 +1,33 @@
+.action-shell { padding-bottom: calc(220rpx + env(safe-area-inset-bottom)); }
+.top-spacer { width: 84rpx; }
+.order-identity { padding: 18rpx 30rpx; }
+.order-identity view { min-height: 78rpx; display: flex; align-items: center; justify-content: space-between; gap: 20rpx; border-bottom: 2rpx solid var(--color-line); }
+.order-identity view:last-child { border-bottom: 0; }
+.order-identity text { color: var(--color-muted); font-size: 23rpx; }
+.order-identity strong { font-size: 24rpx; }
+.gate-ok { color: var(--color-forest); }
+.gate-pending { color: #a36119; }
+.route-card { margin-bottom: 18rpx; padding: 0 30rpx; border: 3rpx solid transparent; }
+.route-card.selected { border-color: #92d7c9; }
+.route-card.locked { opacity: .58; }
+.route-select { min-height: 112rpx; display: flex; align-items: center; justify-content: space-between; gap: 20rpx; }
+.route-select strong, .route-select text, .choice-row strong, .choice-row text { display: block; }
+.route-select strong, .choice-row strong { font-size: 26rpx; }
+.route-select text, .choice-row text { margin-top: 8rpx; color: var(--color-muted); font-size: 21rpx; }
+.route-fields { padding-bottom: 28rpx; border-top: 2rpx solid var(--color-line); }
+.form-section { padding: 10rpx 28rpx 32rpx; }
+.picker-value { justify-content: space-between; }
+.money-field { min-height: 96rpx; display: flex; align-items: center; gap: 12rpx; padding: 0 28rpx; border: 2rpx solid var(--color-line); border-radius: 28rpx; background: #fff; }
+.money-field input { flex: 1; font-size: 29rpx; }
+.choice-list { padding: 0 32rpx; }
+.choice-row { min-height: 112rpx; display: flex; justify-content: space-between; align-items: center; gap: 18rpx; border-bottom: 2rpx solid var(--color-line); }
+.choice-row:last-child { border-bottom: 0; }
+.choice { color: var(--color-muted); font-size: 24rpx; }
+.choice.selected { color: var(--color-forest); font-weight: 700; }
+.switch-row { margin-top: 28rpx; padding: 28rpx 6rpx; display: flex; align-items: center; justify-content: space-between; }
+.switch-row strong, .switch-row text { display: block; }
+.switch-row text { margin-top: 8rpx; color: var(--color-muted); font-size: 23rpx; }
+.short { min-height: 170rpx; }
+.placeholder { color: var(--color-muted); }
+.button-row { margin-top: 36rpx; display: grid; grid-template-columns: 1fr 1fr; gap: 20rpx; }
+.server-date-note { margin: 28rpx 8rpx 0; color: var(--color-muted); font-size: 22rpx; line-height: 1.6; }

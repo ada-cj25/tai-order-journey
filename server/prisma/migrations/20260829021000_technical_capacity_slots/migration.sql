@@ -1,0 +1,3 @@
+ALTER TABLE "Task"
+ADD COLUMN "plannedStartAt" TIMESTAMP(3),
+ADD COLUMN "workloadDays" INTEGER;

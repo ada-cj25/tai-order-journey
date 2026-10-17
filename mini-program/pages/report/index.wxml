@@ -1,0 +1,53 @@
+<view class="page-shell report-shell">
+  <view class="topbar"><button class="icon-button" bindtap="back">返回</button><view class="brand-title">车间报工</view><view class="top-spacer"></view></view>
+  <view wx:if="{{loading}}" class="surface loading-card">正在核对工序状态…</view>
+  <block wx:elif="{{task}}">
+    <view class="page-title">{{task.title}}</view>
+    <view class="page-subtitle">请先确认客户、区域和生产编号</view>
+
+    <view class="identity-chain">
+      <view><text>客户</text><strong>{{task.customerName}}</strong></view><view class="chain-arrow">›</view>
+      <view><text>销售编号</text><strong>{{task.salesNumber}}</strong></view><view class="chain-arrow">›</view>
+      <view><text>区域</text><strong>{{task.productionAreaName}}</strong></view>
+    </view>
+
+    <view class="surface task-context">
+      <view><text>生产编号</text><strong>{{task.productionNumber}}</strong></view>
+      <view><text>生产路线</text><strong>{{task.routeLabel}}</strong></view>
+      <view><text>具体工序</text><strong>{{task.title}}</strong></view>
+      <view><text>所属车间</text><strong>{{task.workshopLabel}}</strong></view>
+      <view><text>完成期限</text><strong>{{task.dueLabel}}</strong></view>
+    </view>
+
+    <view wx:if="{{isCheckIn}}" class="surface checkin-card">
+      <view class="current-head"><text>完成状态</text><view class="status-pill">{{task.statusLabel}}</view></view>
+      <view class="checkin-copy">这是组装车间的最终完成打卡，确认实际生产完成后直接提交。</view>
+    </view>
+    <view wx:else class="surface current-card">
+      <view class="current-head"><text>累计完成</text><view class="status-pill">{{task.statusLabel}}</view></view>
+      <view class="current-quantity"><strong>{{task.completedQty}}</strong><text> / {{task.plannedQty}} {{task.unit}}</text></view>
+      <progress percent="{{progress}}" stroke-width="8" activeColor="#00A98F" backgroundColor="#ECECEA" border-radius="8" />
+    </view>
+
+    <view wx:if="{{!isCheckIn}}" class="quick-actions {{task.startedAt ? 'single-action' : ''}}">
+      <button wx:if="{{!task.startedAt}}" class="start-button" loading="{{submitting}}" disabled="{{submitting}}" bindtap="startWork">开始加工</button>
+      <button class="issue-button" disabled="{{submitting}}" bindtap="openIssue">报告异常</button>
+    </view>
+
+    <view class="report-action-section complete-section {{isCheckIn ? 'checkin-section' : ''}}">
+      <view wx:if="{{!isCheckIn}}" class="form-label">整道工序已全部完成</view>
+      <view wx:if="{{!isCheckIn}}" class="helper">直接将累计进度记为 {{task.plannedQty}}{{task.unit}}，无需输入面积。</view>
+      <button class="complete-button" loading="{{submitting}}" disabled="{{submitting}}" bindtap="confirmComplete">{{isCheckIn ? '一键完成' : '一键全部完成'}}</button>
+    </view>
+
+    <view wx:if="{{!isCheckIn}}" class="report-action-section partial-section">
+    <label class="form-label">只有部分完成时填写累计数量</label>
+    <view class="quantity-row">
+      <input class="form-input" type="digit" value="{{quantity}}" bindinput="changeQuantity" placeholder="输入累计完成数量" />
+      <view class="unit">{{task.unit}}</view>
+    </view>
+    <view class="helper">当前已完成 {{task.completedQty}}{{task.unit}}；填写比它更大、比计划 {{task.plannedQty}}{{task.unit}} 更小的累计值。</view>
+    <button class="primary-button progress-submit" loading="{{submitting}}" disabled="{{submitting}}" bindtap="submitProgress">记录部分进度</button>
+    </view>
+  </block>
+</view>
