@@ -16,12 +16,12 @@ if [[ "$(git describe --tags --exact-match 2>/dev/null || true)" != "$tag" ]]; t
   exit 1
 fi
 
+# Run full business regression acceptance in the development workspace before publishing.
+# This core checkout performs compilation and packaging checks only.
 npm ci
 npm run db:generate
 npm run typecheck
-npm test
-npm run test:workflow
-npm run test:deploy
+npm run typecheck:mini
 npm run build
 npm run build:api
 npm run test:sites

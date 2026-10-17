@@ -23,3 +23,7 @@ docs
 *.pdf
 *.jpg
 *.png
+
+# Runtime artwork is required when building the web client inside Docker.
+!src/assets/
+!src/assets/**

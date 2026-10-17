@@ -1,85 +1,42 @@
-# 苔的跟单旅程 · 微信小程序
+# Tai's Order Journey - WeChat Mini Program
 
-这是与桌面 ERP 并行开发的原生 TypeScript 小程序工程。默认使用 `TEST-DEMO-*` 模拟数据，不调用桌面 Cookie 会话、不连接生产数据库，也不消耗正式编号池；开发者工具模拟器可从登录页切换到本机 API 联调，使用本地 PostgreSQL 测试库。
+This directory contains the native TypeScript Mini Program used by the core project. It includes role-specific pages, API clients, login artwork, and local simulation modules.
 
-## 当前可体验
+## Open the project
 
-- 登录前欢迎页：未登录时先展示深绿点阵、暖白手帐页和用户提供的“雨天”五帧动画（650ms 循环），点击页面或底部入口后进入原登录流程；有效本地会话会直接进入岗位工作台。此页固定展示雨天手帐，不按实时天气切换。
-- 车间生产追踪：按客户和销售编号分组显示当前工人负责的全部未完成区域工序；可搜索客户、销售编号、生产编号，并筛选可报工、进行中、等待前序、异常和今日完成。
-- 多生产区域：内置“周女士全屋定制”演示订单，包含儿童房、衣帽间和卫生间；每个区域使用独立生产编号、生产路线、工序进度和状态。
-- 区域切换：订单详情先选择一个生产区域，下方只展示该区域的车间流程，避免把多个区域的长工序清单混在一起。
-- 个人待办：只显示当前工人已经分配、尚未完成且服务端判定为已解锁的工序，按逾期、加急、临期和期限排序；六个跨客户区域任务可以连续浏览和逐项报工。
-- 扫码报工：扫描生产区域二维码，根据生产编号区分直接报工、多工序选择、等待前序、未分配、区域取消和无效二维码。
-- 车间报工：完整核对客户、销售编号、区域、生产编号、路线和工序；分别支持开始加工、累计进度、二次确认全部完成和报告异常。
-- 报告异常：必填问题说明、最多三张现场照片；API 模式先上传私有附件再提交异常，本地模式保留临时路径。
-- 准实时同步：页面显示时、下拉刷新、报工返回和前台每 30 秒刷新；弱网时保留未提交内容，不离线推进流程。
-- 订单详情：九段订单旅程、统一负责人/下一步事实、区域摘要以及单选区域的独立加工流程。
-- 销售来单：按当前销售账号所属品牌提供正单与关联补单。正单录入客户/合同、定金、预付款、两份凭证、交期、工艺、设计师和加急事实；补单必须选择同品牌可见正单并填写来源、责任与原因，客户等事实继承正单。本机模拟提交生成 `TEST-DEMO-*` 流水号并保存到本机订单列表，不生成正式编号或写入 PostgreSQL。
-- 发货记录：选择区域、日期和末批标记；真实提交继续受区域完工与尾款门禁约束。
-- 安装记录：日期、结论、说明和现场照片选择；真实提交继续受岗位与发货批次约束。
-- WebView：保留独立页面和安全开关，默认关闭。
-- 全岗位工作台：董事长、订单管理员、财务、销售、设计师、技术、采购、车间、安装、售后十类在用岗位登录后自动进入自己的首页和底部导航，不能自行选择角色；历史仓库角色不开放登录。
-- 微信绑定：网页版“**小程序绑定**”可生成24小时一次性邀请码或撤销绑定；后续微信登录无需ERP密码，退出登录只撤销当前设备会话。
-- 销售：服务端草稿、签约订单、设计师分配、定金与预付款事实及凭证上传。
-- 设计：已接单订单可在手机转交给另一名设计师；新负责人接续原截止时间和待办。当前设计师可填写版本、复尺日期、客户确认日期和选填说明，上传多份 CAD、客户确认图和可选样块，保存草稿后正式提交；服务端提交会生成销售编号并交给订单管理员前置审单。
-- 本机模拟订单在正式提交设计资料后显示 `TEST-N/A/C/E/W + YYMM + 四位流水`，用测试前缀区分正式编号，且不占用 PostgreSQL 正式编号池。已经提交的旧模拟单会在再次打开时补出相同格式的测试编号。
-- 本机模拟消息按测试账号分别保存已读状态；返回工作台后角标按实际未读数更新。
-- 品牌销售权限：诺尔丽、艾可居销售主管可查看本品牌所有销售订单并看到所属销售；普通销售只看到本人订单。主管不能代替他人提交收款报备或访问付款凭证。
-- 订单管理员：完整的路线/外购合并发货、末批标记、每区域安装费、指定安装负责人和班组；发货日期由服务端生成。
-- 安装：本人车次、部分完成/现场问题、全部完成、运输费、现场照片和客户签字验收。
-- 售后：已履约订单队列、OPEN/IN_PROGRESS/RESOLVED 状态；成本开关关闭时自动隐藏新建和费用操作。
-- 轻重任务分流：付款核验、设计接单/退回/转交与设计资料提交、采购路线确认、区域五金包确认和董事长关键覆盖可在手机办理；海迅、四类物料 Excel、解析原始数据、成本长表和批量操作仍提示到电脑端办理。
-- 安全退出：退出登录撤销当前设备会话并清理本地业务草稿与缓存，但保留微信和 ERP 员工的绑定；停用、改岗、改品牌或改车间后旧会话由服务端版本立即失效。
+1. Import this directory into WeChat Developer Tools.
+2. The repository uses `touristappid` as its AppID placeholder. Configure your own permitted AppID for the intended local or platform environment. Keep AppSecret on the backend only.
+3. The default `packagedProfile` in `config/runtime.ts` is `mock`. Start with that profile for local UI exploration.
+4. The pre-login scene uses the fixed rainy animation. It is decorative and does not represent live weather.
 
-## 打开方式
+## Runtime modes
 
-1. 安装微信开发者工具。
-2. 导入目录 `/Users/cj25/Documents/ChatGPT/全屋定制erp系统/mini-program`。
-3. `project.config.json` 当前填的是微信公众平台“小程序测试号”的 AppID，仅用于本地开发。公司主体正式小程序的 AppID 尚未提供；取得后再核对主体和权限并更新发布配置。AppSecret 只配置在受保护的云端服务端环境文件，不能提交到小程序包或仓库。
-4. 默认是本机模拟。在**开发者工具模拟器**的登录页点击“连接本机 API 测试库”，才会访问 `http://127.0.0.1:3000`，共享本机网页版的 PostgreSQL 测试库。手机真机不能访问电脑的 `127.0.0.1`。在开发者工具“详情 → 本地设置”中为本机调试临时关闭合法域名校验；此设置不能作为发布验收。
-5. 本机 API 的 `.env` 需在确认数据库和网页 origin 均为本机后设置 `MINI_PROGRAM_ENABLED=true` 与 `MINI_PROGRAM_DEV_LOGIN_ENABLED=true`，重启 API。打开 `http://127.0.0.1:3000/api/v1/public/config`，确认 `localTestAccountsEnabled`、`miniProgramEnabled`、`miniProgramDevLoginEnabled` 均为 `true`。不需要把测试号 AppSecret 写入小程序或本机服务端。
-6. 先在本机网页版登录要测试的员工账号并改掉初始密码，再由董事长或订单管理员在网页“员工账号 → 小程序绑定”给该员工生成一次性邀请码。小程序登录页填写一个独立的英文“本机测试身份”（例如 `sales01`）和邀请码，点“连接本机 ERP”。以后用同一测试身份且不填邀请码即可登录。换岗位时退出登录，使用另一个测试身份和该岗位的邀请码；本地模拟身份只验证业务 API，不验证真实微信身份。
-7. 验证销售建单后，刷新本机网页版 `http://127.0.0.1:5173` 的订单列表；反过来在网页修改后，重新进入小程序订单页并下拉刷新。测试订单必须使用编造客户资料。其余岗位按网页业务顺序逐项验证。
-8. 需要回到纯本机模拟时，在登录页点击“返回本机演示”。该模式的账户选择器只操作小程序本机数据。
+| Mode | Data source | Boundary |
+| --- | --- | --- |
+| `mock` | Local fabricated examples and device storage | No PostgreSQL writes; no formal number-pool consumption |
+| `local-api` | Desktop API at `http://127.0.0.1:3000` | Developer Tools simulator only, with explicit backend flags and employee binding |
+| `company-test-api` | Configured HTTPS company test API | Requires accepted platform configuration, real WeChat identity, and isolated test data |
 
-## 先跑销售本机演示
+The mock modules in `domain/` are runtime dependencies, so they remain in this core checkout. Local mock records do not appear in the desktop database. Clearing simulator storage can remove local mock records.
 
-1. 在登录页选择 `sales` 或 `aikejusales1`，进入“新建”。订单类型只显示当前品牌的“正单”和“补单”；销售不能创建其他品牌订单，补单必须关联同品牌正单。
-2. 用编造客户资料填写正单、定金、预付款并各选一张凭证后提交。`订单`显示权限范围内的订单；`工作台 · 当前待办`只显示轮到当前岗位办理的任务。提交后，该正单的负责人应变成财务部，销售工作台不再显示这笔首付款待办。
-3. 切换到 `finance`，在工作台打开刚创建的订单，核对两笔金额和两张凭证并分别勾选；提交后切换到所分配的 `designer`，其工作台应出现接单任务。接单后可点“转交设计师”，切换到目标设计师应看到同一订单的新待办，原设计师的待办应消失，截止时间不变。预置的顾先生、方女士样例没有可核验的付款事实，不会出现在财务核验待办。
-4. 由当前设计师点“填写并提交设计资料”，填版本和两个日期，从微信会话选 CAD 文件，上传客户确认图；如有样块，再上传样块并填写共用备注。先保存草稿并重新打开检查恢复，再正式提交。此时本机订单交给订单管理员待审；模拟模式只在同一部手机保存，不会出现在本机网页版。要测试网页版同步，须在开发者工具模拟器切到共享 API，并在该模式重新建单。
-5. 若继续在手机本机模拟流程，切换 `orderadmin`，从工作台打开刚提交的 TEST 订单，在订单详情点击“模拟前置审单通过”。切换 `technical` 后，工作台会出现同一订单的“技术拆单”待办；在详情点击“模拟技术拆单 · 生成三区域”。仅新建的 `TEST-DEMO-GD-*` 订单可操作。三区域按上线测试案例布置：厨房仅实木油漆路线（木工 66㎡、油漆 50㎡）、阳台仅板式路线（24㎡）、主卧同时走板式（36㎡）和实木油漆（40㎡）路线；组装分别跟随每条路线。全部从零进度开始，本机生产编号采用 `TEST-YYMMCSSS`（补单为 `TEST-补单-BYYMMCSSS`），其中类别位与网页版相同、序号只在本机测试单中按月递增，不占正式编号池；旧 `TEST-AREA-*` 区域在读取时迁移编号并保留报工记录。车间最晚完成日从设计正式提交日起按精装/毛坯与免漆/油漆的 33/37/38/42 自然日计算，落周日顺延至周一；毛坯别墅另加每层 10 天。此版本前创建的本机订单没有保存现场与工艺字段时，现场按精装估算，工艺按是否存在实木油漆路线推断；如需核对原单的准确期限，请用新版本建单复测。
-6. 切回 `orderadmin`，工作台会出现“技术审单”，在详情点击“模拟技术审单通过”。再切 `procurement`，从待办打开详情，分别点“放行板式路线”和“放行实木油漆路线”。每条路线放行后，只有对应车间工序解锁；另一条可继续待采购。之后切换板式 `panelcut`／`paneledge`／`paneldrill`／`panelclean`／`panelquality`，木工 `woodcut`／`woodmake`／`woodveneer`，油漆 `paintsand`／`paintspray`／`paintquality`，组装 `assemblyworker`，按生产区域逐工序报工；四位车间主管账号也可操作所属车间。木工完成才解锁油漆，板式或油漆各自完成后解锁对应路线的组装工序。订单详情可选择厨房、阳台、主卧逐一查看，报工状态保存在本机，重新登录仍可继续。
-7. 车间报工时，“一键全部完成”直接记满该工序计划面积，无需输入；只有部分完成才填**累计**面积，必须大于当前累计且小于计划面积。上述技术拆单、技术审单和采购放行按钮仅为小程序**本机模拟**，不校验 CAD、物料 Excel、材料成本或真实收款，不写入网页版/PostgreSQL；正式业务仍须在电脑端审核并通过共享 API 流转。早先创建的 `TEST-DEMO-GD-*` 正单如果只有订单而没有保留付款事实，由所属销售从订单详情点击“补报定金与预付款”，重新选择两张照片后报备；旧的临时照片不能自动恢复。小程序卸载或清除微信开发者工具缓存会清掉本机订单和凭证。
-8. 选择“补单”，关联刚才的正单，填写补单来源、责任和原因，再次提交。补单有独立的本机流水号；其付款和后续环节仍待开发，不能作为完整流程验收样本。
+For local API testing, start the root web/API project against a local development database. Explicitly set `MINI_PROGRAM_ENABLED=true` and `MINI_PROGRAM_DEV_LOGIN_ENABLED=true` in that local backend environment. Confirm the flags through `/api/v1/public/config`, then select local API mode in the simulator login page and follow the employee invitation/binding flow.
 
-上述“本机演示”只验证小程序表单、角色范围、列表和本机存储；其“测试批准账户 A/B”是占位项，不对应网页版财务批准的账户目录。选择登录页“连接本机 API 测试库”后，小程序与 `http://127.0.0.1:5173` 网页端共用本地 API/PostgreSQL，收款账户、订单和待办均从服务端读取，但模拟微信身份不代表真实微信登录通过。公司云测试和真机体验还需正式 AppID、服务端密钥与平台配置，再在隔离云测试库逐岗位复测。
+A physical phone cannot reach the computer through the phone's own `127.0.0.1`. Simulated local identity is not proof of production WeChat login readiness.
 
-## 真实接口边界
+## Structure
 
-`config/runtime.ts` 默认是 `mock`；开发者工具手动开启 `local-api` 后，运行时检查开发者工具平台和精确的本机 API 地址；手机真机及云端不能使用这个入口。后端还需显式配置 `MINI_PROGRAM_ENABLED=true` 和 `MINI_PROGRAM_DEV_LOGIN_ENABLED=true`，并确认本机数据库和浏览器 origin，才允许模拟微信身份。云测试配置仍须 HTTPS、正式微信身份和受保护的服务端密钥。
+- `app.json`, `app.ts`, `app.wxss`: application entry, registered pages, and shared styles.
+- `pages/`: login, role workspaces, orders, reporting, shipment, installation, and aftersales screens.
+- `components/`: shared native components.
+- `services/`: authentication, API access, and role-specific data clients.
+- `domain/`: projections, business-facing types, and local mock-mode behavior.
+- `assets/`: referenced branding, icons, and login animation frames.
+- `typings/` and `tsconfig.json`: local TypeScript definitions and compiler settings.
 
-`services/workbench.ts` 与 `services/mobile.ts` 在 mock/API 间提供同一数据结构；服务端已提供 `/api/v1/mini/auth/*`、`/api/v1/mini/workspace`、移动订单DTO、角色写操作、车间工作台和生产区域扫码接口。真实请求采用 Bearer 移动 Token，并发送：
+## Verification and release
 
-- `X-Client: mini`
-- `Idempotency-Key`
-- `X-Expected-Updated-At`
+From the repository root, run `npm run typecheck:mini` or `npm run check`. Full regression tests and design previews were removed from core main and remain in the development workspace and pre-cleanup Git history.
 
-移动控制器复用现有领域服务和事务规则，不接受桌面 Cookie；移动 Token 也不能调用桌面专属写接口。小程序附件按岗位和用途执行白名单，订单详情使用专用DTO，不返回桌面完整对象。
+Backend permissions and workflow gates remain authoritative in API mode. Heavy material import and technical preparation still require the desktop workflow. The presence of pages in this project does not imply release approval for every role or feature.
 
-## 公司云测试接入方式
-
-小程序客户端由微信开发者工具上传到微信平台；公司云服务器继续运行现有网页、API 和同一个 PostgreSQL 测试库。小程序和网页读取、提交的是同一批服务端订单事实，不另建移动数据库。活跃的岗位工作台、订单列表及订单详情在返回前台时刷新，并每 30 秒重新读取；提交成功后从服务端读取结果。断网期间不声称已经同步。
-
-当前工程使用的是“小程序测试号”AppID；默认 `mock` 可手动切本机 API，但公司云测试 API 的小程序开关仍关闭。网站备案不等于微信小程序备案；正式小程序备案须在其微信公众平台后台办理。取得并核对公司主体正式小程序账号后，再按以下顺序联调：
-
-1. 在微信后台核对服务类目、备案、隐私材料，并将 `https://taifollow.cn` 配为实际使用的请求、上传和下载服务器域名。当前核心流程是原生页面，默认关闭的 `web-view` 不参与联调。
-2. 在服务器受保护的 `runtime.env` 中配置 `WECHAT_MINI_APP_ID`、`WECHAT_MINI_APP_SECRET`，并在云测试发布版本中显式设置 `MINI_PROGRAM_ENABLED=true`；密钥不写入仓库或小程序包。后端启动检查会拒绝仅开开关而缺少 AppID/密钥的配置。
-3. 审阅并发布同一版本的网页/API 后，才将小程序 `config/runtime.ts` 的 `packagedProfile` 切到 `company-test-api`，用正式 AppID 在微信开发者工具生成体验版。联调时仍只用编造订单。
-4. 每位员工先用网页账号完成首次改密；管理员再按人生成一次性邀请码，员工用自己的微信绑定原有员工身份。验证两个品牌销售范围、十类在用岗位、跨端 30 秒刷新、附件、弱网重试和停用账号失效，再提交微信审核。历史仓库角色不开放小程序。
-
-正式 AppID、平台配置和审核通过之前，可以继续在本地模拟模式开发和测试，但不能宣称所有员工已可通过微信小程序登录。
-
-## 发布前仍需完成
-
-代码完成不等于可以发布。桌面跨岗验收、主体/AppID/服务类目与备案、公司数据书面授权、隐私材料、HTTPS云测试 API、私有附件、审核测试账号、移动权限负向测试、弱网和并发留证仍须完成。详见 `docs/launch/mini-program-gate.md`。
+Read the [main project guide](../README.md) for installation and the [Mini Program release gate](../docs/launch/mini-program-gate.md) before platform publication. Desktop/mobile-web acceptance, company authorization, AppID ownership, service category, filing, privacy configuration, permissions, and real-device validation remain separate prerequisites.

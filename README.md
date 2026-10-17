@@ -2,7 +2,7 @@
 
 A desktop-first internal order follow-up system for custom cabinetry and whole-home furnishing projects. It connects sales, design, technical preparation, procurement, workshop production, shipment, installation, customer acceptance, and aftersales around a shared order record.
 
-This private repository contains the web application, backend API, a WeChat Mini Program prototype, and a local customer-service agent demo. The application interface is primarily Chinese; this README provides an English introduction and development guide.
+The `main` branch of this private repository contains the core web application, backend API, WeChat Mini Program, and the files needed to install, build, initialize, and deploy them. The application interface is primarily Chinese; this README provides an English introduction and development guide.
 
 ## Project status
 
@@ -11,10 +11,9 @@ This private repository contains the web application, backend API, a WeChat Mini
 | Desktop web application | Role-based order management and operational workflows | The primary implementation and acceptance surface |
 | Mobile web view | Chairman-administrator access at `/mobile` | Read-only, with business writes rejected by its dedicated server-side session |
 | WeChat Mini Program | Native TypeScript pages, local simulations, and optional local API integration | Defaults to mock mode; release remains gated by desktop/mobile-web acceptance and platform requirements |
-| Customer-service agent | Isolated local demo with authorized order lookup, knowledge retrieval, and execution diagnostics | Requires separate setup; not enabled for production |
 | Deployment assets | Container builds, environment templates, migrations, and operational runbooks | Source availability does not establish deployment or release readiness |
 
-The initial import on **October 18, 2026** is a sanitized snapshot of the working source tree. It starts a new Git history and excludes the original workspace's business samples and historical commits.
+The initial import on **October 18, 2026** is a sanitized snapshot of the working source tree. The subsequent core cleanup removes independent experiments, development records, unused artwork, one-off acceptance utilities, and the full regression suites from `main`. The complete development workspace remains separate; the pre-cleanup source is recoverable at commit `47e993a`. Business samples and the original workspace history were never imported.
 
 ## Core capabilities
 
@@ -54,14 +53,13 @@ Cost access is role-scoped and controlled by a feature flag. Formal production k
 
 | Layer | Main technologies | Responsibility |
 | --- | --- | --- |
-| Web client | React 19, TypeScript, Vite 6, Ant Design 6 | Desktop UI, mobile read-only view, workflow forms, and local demo screens |
+| Web client | React 19, TypeScript, Vite 6, Ant Design 6 | Desktop UI, mobile read-only view, and workflow forms |
 | API | NestJS 11, TypeScript, Express | Authentication, authorization, business commands, scheduling, and attachment access |
 | Persistence | PostgreSQL 17, Prisma 7 | Business records, immutable snapshots, audit events, and sessions |
 | Mini Program | Native WeChat pages and TypeScript | Mock workflows and dedicated mobile API clients |
-| Local agent | Python, FastAPI, LangGraph, MCP, and optional retrieval models | Controlled customer-service demonstration and diagnostics |
 | Deployment | Docker, Compose, Caddy or Nginx, Tencent COS | Packaging, HTTPS entry point, private files, and backup tooling |
 
-The web client calls the API, which enforces business permissions and persists changes in PostgreSQL. The Mini Program uses dedicated mobile authentication and controllers rather than desktop session cookies. The customer-service demo runs separately and obtains order facts through authorized tools.
+The web client calls the API, which enforces business permissions and persists changes in PostgreSQL. The Mini Program uses dedicated mobile authentication and controllers rather than desktop session cookies.
 
 Use the dependency lockfile and configuration files as the source of truth for exact versions.
 
@@ -69,24 +67,22 @@ Use the dependency lockfile and configuration files as the source of truth for e
 
 ```text
 .
-├── src/                       # Web application, styles, and visual assets
-├── server/                    # NestJS controllers, services, and backend tests
-│   ├── domain/                # Business rules and projections
-│   └── prisma/                # Schema, migrations, and local seed utilities
-├── mini-program/              # Native WeChat Mini Program prototype
-├── customer-agent/            # Local agent and synthetic demo knowledge
-├── tests/                     # Workflow, deployment, integration, and packaging tests
-├── scripts/                   # Development, verification, and maintenance utilities
-├── deploy/                    # Container and environment templates
-│   ├── personal/              # Shared components and historical route assets
-│   └── company-test/          # Isolated company-test overrides
-├── docs/
-│   ├── adr/                   # Architecture decision records
-│   └── launch/                # Acceptance, deployment, and operations runbooks
-├── worker/                    # Sites-compatible static prototype worker
-├── .github/workflows/         # Automated verification; no deployment workflow
-├── AGENTS.md                  # Product and implementation constraints
-└── CONTEXT.md                 # Domain terminology and context
+├── src/                       # Desktop web, mobile read-only view, and active assets
+├── server/                    # NestJS controllers and business services
+│   ├── domain/                # Business rules, projections, and local account rosters
+│   └── prisma/                # Schema, full migration history, and base local seed
+├── mini-program/              # Native pages, API clients, and required mock-mode data
+├── scripts/                   # Build, health, account setup, and backup utilities
+├── deploy/                    # Container, environment, backup, and restore files
+├── docs/launch/                # Deployment and acceptance instructions
+├── worker/                    # Static prototype packaging compatibility
+├── .openai/hosting.json        # Static prototype hosting descriptor
+├── tests/sites-worker.test.mjs # Small check for the retained packaging contract
+├── .github/workflows/verify.yml
+├── Dockerfile
+├── package.json
+├── package-lock.json
+└── README.md
 ```
 
 Dependencies, build outputs, the generated Prisma client, uploaded files, and local environment files are excluded from Git.
@@ -99,7 +95,6 @@ Dependencies, build outputs, the generated Prisma client, uploaded files, and lo
 - **PostgreSQL 17**, with a dedicated local role and a disposable development database.
 - Git access to this private repository.
 - WeChat Developer Tools only if working on the Mini Program.
-- A Python virtual environment only if working on the customer-service demo; its dependencies are separate from npm.
 
 ### 1. Clone and install
 
@@ -194,67 +189,51 @@ Optional local API integration requires:
 
 A physical phone cannot reach the development computer through the phone's own `127.0.0.1`. Simulator domain-check exceptions and simulated identities do not demonstrate production WeChat login readiness.
 
-Run the Mini Program tests with:
+Check the Mini Program TypeScript with:
 
 ```bash
-npm run test:mini
+npm run typecheck:mini
 ```
 
-See the [Mini Program guide](mini-program/README.md) for scenarios and the [release gate](docs/launch/mini-program-gate.md) for prerequisites. These supporting documents are currently in Chinese and may describe the original local test setup; the checked-in configuration and snapshot notes above identify what is included here.
-
-## Local customer-service demo
-
-The optional demo uses separate local databases for fabricated ERP orders and agent state:
-
-- `whole_house_erp_customer_demo`
-- `whole_house_erp_customer_agent_demo`
-
-It requires an ignored `.env.customer-demo`, a Python environment, and explicit initialization. Follow the [customer-service demo guide](docs/customer-agent-local-demo.md) before starting the dedicated services:
-
-```bash
-npm run dev:customer:api
-npm run dev:customer:agent
-npm run dev:customer:web
-```
-
-The demo web entry point is `http://127.0.0.1:5174/customer`. Model credentials and optional downloaded weights remain local. The single-agent workflow exposes structured tool and validation outcomes; unreviewed material must not be treated as approved company policy.
-
-`customer-agent/benchmark-result.json` is a reviewed synthetic fixture used by the UI. Its saved metrics are not evidence of current production accuracy or a substitute for evaluation with independently labeled, approved data.
+See the [Mini Program guide](mini-program/README.md) for scenarios and the [release gate](docs/launch/mini-program-gate.md) for prerequisites. The release-gate document is currently in Chinese. The checked-in configuration and the snapshot notes above identify what is included here.
 
 ## Build and verification
 
-Generate the Prisma client before running backend checks.
+Run the complete core check with:
+
+```bash
+npm run check
+```
+
+This generates the Prisma client, checks web/backend/Mini Program types, builds the web application and API, and verifies the retained static packaging contract. It does not connect to a business database or perform business workflow acceptance.
 
 | Command | What it checks or produces |
 | --- | --- |
 | `npm run typecheck` | Web and backend TypeScript checks |
-| `npm test` | Backend service and domain tests |
-| `npm run test:mini` | Mini Program tests |
-| `npm run test:workflow` | Workflow forms, drafts, and related regressions |
-| `npm run test:deploy` | Deployment-template checks |
-| `npm run build` | Web output in `dist/client/` and Sites-compatible packaging |
+| `npm run typecheck:mini` | Mini Program TypeScript checks |
+| `npm run build` | Web output in `dist/client/` and static packaging compatibility files |
 | `npm run build:api` | Compiled API in `server/dist/` |
-| `npm run test:sites` | Static worker and packaging checks; run after the web build |
-| `npm run test:integration` | Database-backed tests in a newly created isolated database |
+| `npm run test:sites` | Four static worker and packaging checks; run after the web build |
 | `npm run health:local` | Checks the running local application |
 
-Integration tests require an explicit `TEST_DATABASE_ADMIN_URL`. The runner creates a uniquely named `erp_test_*` database, applies migrations, runs the suite, and drops that database afterward. It does not fall back to the application's `DATABASE_URL`; use a dedicated local or CI database administrator connection.
+The GitHub Actions workflow runs `npm run check`, builds the container targets, and audits production dependencies. It does **not** deploy the application. Consult each run for its actual result.
 
-The GitHub Actions workflow verifies pushes and pull requests, including database integration tests, container builds, and a dependency audit. It does **not** deploy the application. Consult each run for its actual result; local test results do not imply that every CI step has passed.
+### What was retained and why
 
-### Initial snapshot verification
+- **Database schema and every migration:** a fresh installation needs the full schema history, including compatibility migrations.
+- **Mini Program mock modules:** the default local mode imports these files at runtime; they are not disposable test fixtures.
+- **Base seed and account setup:** needed for the supported local login and role-testing setup. Production uses separate bootstrap commands.
+- **Deployment, backup, restore, and launch guidance:** required to operate the application and preserve its data correctly.
+- **Static packaging files and their small test:** the existing web build and Dockerfile depend on this compatibility contract.
+- **Dependency lockfile and configuration:** required for reproducible installs and compilation.
 
-For the October 18, 2026 import, local type checking, the web build, and API compilation passed. The following **281 tests** also passed:
+### Regression coverage outside main
 
-| Suite | Passed |
-| --- | ---: |
-| Backend | 182 |
-| Mini Program | 51 |
-| Workflow | 38 |
-| Deployment templates | 6 |
-| Sites packaging | 4 |
+The full backend, Mini Program, workflow, integration, and UI regression sources were removed from `main` as part of the core-only cleanup. They remain in the original development workspace and in the pre-cleanup sanitized commit `47e993a`.
 
-That verification did not include database integration tests, Docker builds, or full cloud acceptance. The web build retained a large-bundle warning. These are historical results for the initial snapshot, not a live status badge for later commits.
+During cleanup, the runtime changes passed **182 backend tests, 51 Mini Program tests, and 38 workflow tests** before those test sources were removed. The retained packaging checks run against the final core build. These local results do not claim Docker, database integration, physical-device, or full cloud acceptance.
+
+Removing test files does not remove the need for release validation. Run the full business regression suite in the development workspace and complete the applicable acceptance runbook before releasing a changed system.
 
 ## Deployment and operational boundaries
 
@@ -280,8 +259,11 @@ The sanitized import excludes:
 - Real order photo transcriptions and supplied material-price datasets.
 - Dedicated seed/import utilities and tests dependent on those excluded samples.
 - Local acceptance screenshots and generated business-data reports.
+- Independent customer-service agent code, its web/admin screens, and its API endpoints.
+- Developer instructions, architecture notes, design drafts, unused artwork, and one-off acceptance scripts.
+- Full regression suites and their npm commands; only the small packaging check remains.
 
-General business rules, supported workbook parsers, application assets, migrations, and fabricated regression fixtures remain included. The original workspace and its local business samples were preserved separately.
+General business rules, supported workbook parsers, active application assets, migrations, and the fabricated data needed by local runtime modes remain included. The original workspace and its local business samples were preserved separately.
 
 Future updates should be reviewed as source changes from this sanitized history. Directly merging the original workspace's history could reintroduce excluded material. A source checkout alone cannot restore orders, attachments, credentials, or a running environment.
 
@@ -289,11 +271,7 @@ Future updates should be reviewed as source changes from this sanitized history.
 
 | Document | Purpose |
 | --- | --- |
-| [Product and implementation constraints](AGENTS.md) | Durable repository-specific requirements |
-| [Domain context](CONTEXT.md) | Shared business terminology |
-| [Architecture decisions](docs/adr/) | Recorded design choices |
 | [Launch runbooks](docs/launch/README.md) | Environment setup, acceptance, and operations |
 | [Mini Program guide](mini-program/README.md) | Local simulator and API scenarios |
-| [Customer-service demo guide](docs/customer-agent-local-demo.md) | Isolated agent setup and evaluation boundaries |
 
-Most supporting business documents and UI labels are currently in Chinese. Read the relevant runbook alongside the actual configuration before environment-specific operations.
+Supporting launch documents and UI labels are currently in Chinese. Read the relevant runbook alongside the actual configuration before environment-specific operations.

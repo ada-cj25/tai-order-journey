@@ -13,9 +13,6 @@ backups/
 server/dist/
 server/generated/
 server/uploads/
-customer-agent/.venv/
-customer-agent/.models/
-customer-agent/__pycache__/
 *.log
 .DS_Store
 

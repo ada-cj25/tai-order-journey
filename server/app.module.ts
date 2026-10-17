@@ -45,8 +45,6 @@ import { MiniWorkspaceService } from "./mini-workspace.service.js";
 import { MiniAttachmentsController, MiniPackageCountController, MiniProductionController, MiniWorkshopController } from "./mini-workshop.controller.js";
 import { LoginWeatherController } from "./login-weather.controller.js";
 import { LoginWeatherService } from "./login-weather.service.js";
-import { CustomerDemoAdminController, CustomerDemoController, CustomerDemoInternalController } from "./customer-demo.controller.js";
-import { CustomerDemoService } from "./customer-demo.service.js";
 
 @Module({
   imports: [ScheduleModule.forRoot()],
@@ -84,9 +82,6 @@ import { CustomerDemoService } from "./customer-demo.service.js";
     MiniProductionController,
     MiniPackageCountController,
     MiniAttachmentsController,
-    CustomerDemoController,
-    CustomerDemoInternalController,
-    CustomerDemoAdminController,
   ],
   providers: [
     PrismaService,
@@ -107,7 +102,6 @@ import { CustomerDemoService } from "./customer-demo.service.js";
     MiniAuthService,
     MiniWorkspaceService,
     LoginWeatherService,
-    CustomerDemoService,
     { provide: APP_GUARD, useClass: SessionGuard },
   ],
 })

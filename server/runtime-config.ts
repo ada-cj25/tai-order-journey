@@ -13,18 +13,6 @@ export function costEnabled(env: NodeJS.ProcessEnv = process.env) {
   return env.COST_MODULE_ENABLED === "true" || (env.NODE_ENV !== "production" && env.COST_MODULE_ENABLED !== "false");
 }
 
-export function customerDemoEnabled(env: NodeJS.ProcessEnv = process.env) {
-  if (env.CUSTOMER_DEMO_ENABLED !== "true" || env.NODE_ENV === "production" || env.APP_ENVIRONMENT === "company-test") return false;
-  try {
-    const database = new URL(env.DATABASE_URL ?? "");
-    const web = new URL(env.WEB_ORIGIN ?? "http://127.0.0.1:5173");
-    const loopback = (host: string) => ["localhost", "127.0.0.1", "[::1]"].includes(host);
-    return loopback(database.hostname) && database.pathname === "/whole_house_erp_customer_demo"
-      && loopback(web.hostname) && loopback(env.API_HOST ?? "127.0.0.1")
-      && (env.ATTACHMENT_STORAGE ?? "local") === "local";
-  } catch { return false; }
-}
-
 export function assertCostEnabled() {
   if (!costEnabled()) throw new GoneException("成本模块尚未验收开放；采购与生产不受影响");
 }

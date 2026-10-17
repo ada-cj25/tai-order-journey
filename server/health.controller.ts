@@ -2,7 +2,7 @@ import { Controller, Get, Inject, ServiceUnavailableException } from "@nestjs/co
 import { Public } from "./auth.js";
 import { PrismaService } from "./prisma.service.js";
 import { ReminderPlanner } from "./reminder.service.js";
-import { customerDemoEnabled, localTestAccountsEnabled } from "./runtime-config.js";
+import { localTestAccountsEnabled } from "./runtime-config.js";
 import { miniProgramDevLoginEnabled, miniProgramEnabled } from "./mini-auth.service.js";
 
 @Controller("api/health")
@@ -34,7 +34,6 @@ export class PublicConfigController {
       productName: "苔的跟单旅程",
       environment: process.env.APP_ENVIRONMENT === "company-test" ? "company-test" : process.env.NODE_ENV ?? "development",
       localTestAccountsEnabled: localTestAccountsEnabled(),
-      customerDemoEnabled: customerDemoEnabled(),
       miniProgramEnabled: miniProgramEnabled(),
       miniProgramDevLoginEnabled: miniProgramDevLoginEnabled(),
       icpFilingNumber: process.env.ICP_FILING_NUMBER?.trim() || null,

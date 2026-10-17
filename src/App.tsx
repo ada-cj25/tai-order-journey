@@ -62,7 +62,6 @@ import { PaymentAccountManager, type PaymentAccount } from "./PaymentAccountMana
 import { OutsourceRequirementEditor } from "./OutsourceRequirementEditor";
 import { InteractiveOrangeCat } from "./ScrapbookDecor";
 import { LoginWeatherScene } from "./LoginWeatherScene";
-import { CustomerDemoAdmin } from "./CustomerDemoAdmin";
 import { shouldReleaseIdempotencyKey } from "./idempotency";
 import { RESPONSIBILITY_TYPE_OPTIONS, SUPPLEMENT_TYPE_OPTIONS, responsibilityTypeLabel, supplementTypeLabel } from "./order-labels";
 import { orderTimelineColor } from "./order-timeline-color";
@@ -226,7 +225,7 @@ type MaterialCostVersion = {
 type EventItem = { id: string; title: string; description: string; type: string; createdAt: string; metadata?: Record<string, unknown> | null; actor?: { name: string; department: string } };
 type AfterSalesCase = { id: string; updatedAt: string; caseNumber: string; issueType: string; description: string; warrantyYears?: number | null; status: string; costSubtotal?: number | null; costStatus?: string | null; order: { id: string; salesNumber?: string | null; trackingSerial: string; customerName: string }; costBatches?: Array<{ id: string; incurredOn: string; amount: number; description: string; recordedAt: string; attachmentIds?: string[]; voidedAt?: string | null; voidReason?: string | null }> };
 type NotificationItem = { id: string; level: string; title: string; body: string; readAt?: string | null; createdAt: string };
-type PublicConfig = { productName: string; environment?: string; localTestAccountsEnabled?: boolean; customerDemoEnabled?: boolean; miniProgramEnabled?: boolean; icpFilingNumber?: string | null; publicSecurityFilingNumber?: string | null; publicSecurityFilingUrl?: string | null };
+type PublicConfig = { productName: string; environment?: string; localTestAccountsEnabled?: boolean; miniProgramEnabled?: boolean; icpFilingNumber?: string | null; publicSecurityFilingNumber?: string | null; publicSecurityFilingUrl?: string | null };
 
 const STAGES = [
   ["DEPOSIT_PENDING", "签订合同"],
@@ -809,7 +808,6 @@ function RootApp() {
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [paymentAccounts, setPaymentAccounts] = useState<PaymentAccount[]>([]);
   const [paymentAccountOpen, setPaymentAccountOpen] = useState(false);
-  const [customerDemoOpen, setCustomerDemoOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const shownNotifications = useRef(new Set<string>());
   const latestSelected = useRef<Order | null>(null);
@@ -845,7 +843,6 @@ function RootApp() {
     setNotifications([]);
     setPaymentAccounts([]);
     setPaymentAccountOpen(false);
-    setCustomerDemoOpen(false);
     setNotificationOpen(false);
     setSubmissionDetail(null);
     shownNotifications.current.clear();
@@ -1584,9 +1581,8 @@ function RootApp() {
       <div className="erp-user"><Avatar>{employee.name.slice(0, 1)}</Avatar><div><strong>{employee.name}</strong><span>{employee.department} · {(employee.role === "SALES" ? salesRoleLabel(employee) : ROLE_LABELS[employee.role])}</span></div><Button type="text" aria-label="退出登录" icon={<RiLogoutBoxRLine size={18} />} onClick={() => logout()} /></div>
     </Layout.Sider>
     <Layout>
-      <header className="erp-header"><div><strong>{employee.environment === "company-test" ? "公司云测试环境 · 仅使用编造数据" : employee.environment === "production" ? "正式业务环境" : "本地 / 测试验收环境"}</strong><span>Asia/Shanghai · 小程序{publicConfig.miniProgramEnabled ? "接口已开启" : "生产接口关闭"}</span></div><Space>{publicConfig.customerDemoEnabled && ["SALES", "ORDER_ADMIN", "CHAIRMAN"].includes(employee.role) && <Button onClick={() => setCustomerDemoOpen(true)}>客户客服 Demo</Button>}{["FINANCE", "CHAIRMAN"].includes(employee.role) && <Button onClick={() => setPaymentAccountOpen(true)}>{employee.role === "FINANCE" ? "申请收款账户" : `审批收款账户${paymentAccounts.some((account) => account.status === "PENDING") ? "（待办）" : ""}`}</Button>}{showLocalTestAccounts({ devBuild: import.meta.env.DEV, backendEnabled: publicConfig.localTestAccountsEnabled, hostname: window.location.hostname, mobileReadonly: mobileRoute }) && <Button onClick={() => Modal.confirm({ title: "切换测试账号", content: "将退出当前账号并返回测试账号选择页。已保存的数据保留，未提交的表单请先保存当前进度。", okText: "返回账号选择", cancelText: "继续当前操作", onOk: () => { try { window.sessionStorage.setItem(LOCAL_TEST_LOGIN_PAGE_KEY, "1"); } catch { /* optional */ } return logout(); } })}>切换测试账号</Button>}<Button type="text" onClick={() => setPasswordOpen(true)}>修改密码</Button><Badge count={notifications.filter((item) => !item.readAt).length} size="small"><Button type="text" aria-label="打开实时消息" icon={<RiNotification3Line size={18} />} onClick={() => setNotificationOpen(true)} /></Badge><Tag color="green">服务端权限已启用</Tag></Space></header>
+      <header className="erp-header"><div><strong>{employee.environment === "company-test" ? "公司云测试环境 · 仅使用编造数据" : employee.environment === "production" ? "正式业务环境" : "本地 / 测试验收环境"}</strong><span>Asia/Shanghai · 小程序{publicConfig.miniProgramEnabled ? "接口已开启" : "生产接口关闭"}</span></div><Space>{["FINANCE", "CHAIRMAN"].includes(employee.role) && <Button onClick={() => setPaymentAccountOpen(true)}>{employee.role === "FINANCE" ? "申请收款账户" : `审批收款账户${paymentAccounts.some((account) => account.status === "PENDING") ? "（待办）" : ""}`}</Button>}{showLocalTestAccounts({ devBuild: import.meta.env.DEV, backendEnabled: publicConfig.localTestAccountsEnabled, hostname: window.location.hostname, mobileReadonly: mobileRoute }) && <Button onClick={() => Modal.confirm({ title: "切换测试账号", content: "将退出当前账号并返回测试账号选择页。已保存的数据保留，未提交的表单请先保存当前进度。", okText: "返回账号选择", cancelText: "继续当前操作", onOk: () => { try { window.sessionStorage.setItem(LOCAL_TEST_LOGIN_PAGE_KEY, "1"); } catch { /* optional */ } return logout(); } })}>切换测试账号</Button>}<Button type="text" onClick={() => setPasswordOpen(true)}>修改密码</Button><Badge count={notifications.filter((item) => !item.readAt).length} size="small"><Button type="text" aria-label="打开实时消息" icon={<RiNotification3Line size={18} />} onClick={() => setNotificationOpen(true)} /></Badge><Tag color="green">服务端权限已启用</Tag></Space></header>
       <Layout.Content className="erp-content">{content}</Layout.Content>
-      <Modal title="客户客服 Demo" open={customerDemoOpen} onCancel={() => setCustomerDemoOpen(false)} footer={null} width={820} destroyOnHidden><CustomerDemoAdmin api={api.call} orders={orders} role={employee.role} /></Modal>
       {(publicConfig.icpFilingNumber || publicConfig.publicSecurityFilingNumber) && <footer className="erp-filing-footer"><FilingLinks filing={publicConfig} /></footer>}
     </Layout>
     <CreateOrderModal key={employee.id} open={createOpen} employee={employee} employees={employees} orders={orders} paymentAccounts={paymentAccounts.filter((account) => account.status === "APPROVED").map((account) => account.name)} initialParentId={createParentId} onCancel={() => { setCreateOpen(false); setCreateParentId(null); }} api={api.call} onCreated={(order) => { setCreateOpen(false); setCreateParentId(null); setSelected(order); loadOrders(); }} />
